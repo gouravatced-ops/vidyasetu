@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidyasetu – Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════ TOKENS ═══════ */
+        :root {
+            --navy: #0b1640;
+            --navy2: #112060;
+            --sidebar-w: 230px;
+            --sidebar-collapsed: 60px;
+            --yellow: #f5a623;
+            --yellow2: #d4880a;
+            --blue: #1a3fcc;
+            --blue2: #3d5fe8;
+            --green: #10b981;
+            --red: #ef4444;
+            --orange: #f97316;
+            --purple: #7c3aed;
+            --teal: #0891b2;
+            --bg: #f1f4f9;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b;
+            --header-h: 60px;
+            --radius: 10px;
+            --shadow: 0 2px 12px rgba(0, 0, 0, .07);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        .fw-bold,
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c8d0e0;
+            border-radius: 4px;
+        }
+
+        /* ═══════ LAYOUT ═══════ */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ═══════ SIDEBAR ═══════ */
+        #sidebar {
+            width: var(--sidebar-w);
+            background: var(--navy);
+            flex-shrink: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1040;
+            display: flex;
+            flex-direction: column;
+            transition: width .28s cubic-bezier(.4, 0, .2, 1), transform .28s;
+            overflow: hidden;
+        }
+
+        #sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        /* mobile: slide off-screen */
+        @media(max-width:991px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+
+            #sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            #sidebar.collapsed {
+                width: var(--sidebar-w);
+            }
+        }
+
+        /* brand */
+        .sb-brand {
+            height: var(--header-h);
+            background: var(--yellow);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 10px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sb-logo {
+            width: 36px;
+            height: 36px;
+            background: #fff;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .sb-logo svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--navy);
+            fill: none;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .sb-name {
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: var(--navy);
+            transition: opacity .2s;
+        }
+
+        .sb-tm {
+            font-size: .6rem;
+            vertical-align: super;
+            color: var(--navy);
+            opacity: .7;
+        }
+
+        #sidebar.collapsed .sb-name,
+        #sidebar.collapsed .sb-tm {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        /* hamburger inside brand */
+        .sb-toggle {
+            margin-left: auto;
+            background: none;
+            border: none;
+            padding: 4px;
+            color: var(--navy);
+            font-size: 1.1rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform .2s;
+        }
+
+        .sb-toggle:hover {
+            opacity: .75;
+        }
+
+        /* nav */
+        .sb-nav {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px 0;
+        }
+
+        .sb-nav::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .sb-section {
+            font-size: .63rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .3);
+            padding: 12px 18px 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: opacity .2s;
+        }
+
+        #sidebar.collapsed .sb-section {
+            opacity: 0;
+        }
+
+        /* nav item */
+        .nav-item {
+            list-style: none;
+        }
+
+        .nav-link-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 18px;
+            color: rgba(255, 255, 255, .7);
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+            transition: all .18s;
+            position: relative;
+        }
+
+        .nav-link-item:hover {
+            background: rgba(255, 255, 255, .07);
+            color: #fff;
+        }
+
+        .nav-link-item.active {
+            background: rgba(245, 166, 35, .15);
+            color: var(--yellow);
+            border-left-color: var(--yellow);
+        }
+
+        .nav-link-item .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: .95rem;
+            flex-shrink: 0;
+        }
+
+        .nav-link-item .nav-label {
+            font-size: .85rem;
+            font-weight: 500;
+            flex: 1;
+            transition: opacity .2s;
+        }
+
+        .nav-link-item .nav-arrow {
+            font-size: .65rem;
+            transition: transform .25s;
+            color: rgba(255, 255, 255, .4);
+        }
+
+        .nav-link-item.open .nav-arrow {
+            transform: rotate(90deg);
+        }
+
+        #sidebar.collapsed .nav-label,
+        #sidebar.collapsed .nav-arrow {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        /* sub menu */
+        .sub-menu {
+            list-style: none;
+            background: rgba(0, 0, 0, .2);
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height .3s ease;
+        }
+
+        .sub-menu.open {
+            max-height: 300px;
+        }
+
+        .sub-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px 8px 50px;
+            color: rgba(255, 255, 255, .55);
+            font-size: .82rem;
+            transition: all .18s;
+        }
+
+        .sub-menu li a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .05);
+        }
+
+        .sub-menu li a.active {
+            color: var(--yellow);
+        }
+
+        .sub-menu li a::before {
+            content: '›';
+            font-size: 1rem;
+        }
+
+        #sidebar.collapsed .sub-menu {
+            display: none;
+        }
+
+        /* badge */
+        .nav-badge {
+            background: var(--yellow);
+            color: var(--navy);
+            font-size: .62rem;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 50px;
+            flex-shrink: 0;
+        }
+
+        /* sb footer */
+        .sb-footer {
+            padding: 14px 16px;
+            border-top: 1px solid rgba(255, 255, 255, .08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sb-footer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--yellow);
+            display: grid;
+            place-items: center;
+            font-family: 'Sora', sans-serif;
+            font-size: .8rem;
+            font-weight: 800;
+            color: var(--navy);
+            flex-shrink: 0;
+        }
+
+        .sb-footer-text {
+            font-size: .78rem;
+            color: rgba(255, 255, 255, .6);
+            transition: opacity .2s;
+        }
+
+        .sb-footer-text strong {
+            color: #fff;
+            display: block;
+            font-size: .82rem;
+        }
+
+        #sidebar.collapsed .sb-footer-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        /* tooltip for collapsed */
+        #sidebar.collapsed .nav-link-item:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            left: calc(100% + 6px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--navy2);
+            color: #fff;
+            font-size: .75rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        /* ═══════ MAIN ═══════ */
+        .main-wrap {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left .28s;
+            min-width: 0;
+        }
+
+        .main-wrap.collapsed {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        @media(max-width:991px) {
+
+            .main-wrap,
+            .main-wrap.collapsed {
+                margin-left: 0;
+            }
+        }
+
+        /* ═══════ HEADER ═══════ */
+        .top-header {
+            height: var(--header-h);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, .06);
+        }
+
+        .hdr-mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text);
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        @media(max-width:991px) {
+            .hdr-mobile-toggle {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .hdr-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .98rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .hdr-title span {
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .hdr-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f4f9;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 7px 16px;
+            flex: 1;
+            max-width: 340px;
+        }
+
+        .hdr-search input {
+            border: none;
+            background: transparent;
+            font-size: .85rem;
+            color: var(--text);
+            outline: none;
+            width: 100%;
+        }
+
+        .hdr-search i {
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .hdr-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .hdr-icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #f1f4f9;
+            border: none;
+            color: var(--muted);
+            font-size: .9rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .hdr-icon-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .hdr-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-size: .6rem;
+            font-weight: 800;
+            display: grid;
+            place-items: center;
+            border: 2px solid #fff;
+        }
+
+        .badge-yellow {
+            background: var(--yellow);
+            color: var(--navy);
+        }
+
+        .badge-red {
+            background: var(--red);
+            color: #fff;
+        }
+
+        /* profile dropdown */
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background .2s;
+        }
+
+        .profile-btn:hover {
+            background: #f1f4f9;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--navy);
+            display: grid;
+            place-items: center;
+            font-family: 'Sora', sans-serif;
+            font-size: .85rem;
+            font-weight: 800;
+            color: var(--yellow);
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            text-align: left;
+        }
+
+        .profile-name {
+            font-family: 'Sora', sans-serif;
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .profile-role {
+            font-size: .72rem;
+            color: var(--muted);
+        }
+
+        /* dropdown menu */
+        .hdr-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .12);
+            min-width: 200px;
+            z-index: 9999;
+            display: none;
+            overflow: hidden;
+            animation: ddIn .2s ease;
+        }
+
+        .hdr-dropdown.show {
+            display: block;
+        }
+
+        @keyframes ddIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .dd-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .dd-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            font-size: .84rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: background .18s;
+        }
+
+        .dd-item:hover {
+            background: #f1f4f9;
+        }
+
+        .dd-item i {
+            width: 18px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .dd-divider {
+            border-top: 1px solid var(--border);
+        }
+
+        .dd-danger {
+            color: var(--red);
+        }
+
+        .dd-danger i {
+            color: var(--red);
+        }
+
+        /* notification dropdown */
+        .notif-dd {
+            min-width: 320px;
+            max-height: 440px;
+            overflow-y: auto;
+        }
+
+        .notif-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .notif-head h6 {
+            font-family: 'Sora', sans-serif;
+            font-size: .85rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .notif-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid #f1f4f9;
+            cursor: pointer;
+            transition: background .18s;
+        }
+
+        .notif-item:hover {
+            background: #f8fafc;
+        }
+
+        .notif-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .notif-text {
+            font-size: .8rem;
+            color: var(--text);
+        }
+
+        .notif-time {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .notif-foot {
+            padding: 10px 16px;
+            text-align: center;
+            font-size: .8rem;
+            color: var(--blue);
+            cursor: pointer;
+        }
+
+        .notif-foot:hover {
+            text-decoration: underline;
+        }
+
+        /* ═══════ CONTENT ═══════ */
+        .content {
+            padding: 20px 24px;
+            flex: 1;
+        }
+
+        @media(max-width:576px) {
+            .content {
+                padding: 14px 14px;
+            }
+        }
+
+        /* breadcrumb */
+        .page-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .82rem;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .page-breadcrumb a {
+            color: var(--blue);
+        }
+
+        .page-breadcrumb span {
+            color: var(--muted);
+        }
+
+        /* ═══════ STAT CARDS ═══════ */
+        .stat-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow);
+            border-bottom: 3px solid transparent;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .si-green {
+            background: #d1fae5;
+            color: var(--green);
+        }
+
+        .si-blue {
+            background: #dbeafe;
+            color: var(--blue);
+        }
+
+        .si-orange {
+            background: #fff7ed;
+            color: var(--orange);
+        }
+
+        .si-yellow {
+            background: rgba(245, 166, 35, .15);
+            color: var(--yellow2);
+        }
+
+        .si-red {
+            background: #fee2e2;
+            color: var(--red);
+        }
+
+        .si-purple {
+            background: #ede9fe;
+            color: var(--purple);
+        }
+
+        .stat-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .stat-lbl {
+            font-size: .8rem;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        .stat-trend {
+            font-size: .75rem;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend-up {
+            color: var(--green);
+        }
+
+        .trend-dn {
+            color: var(--red);
+        }
+
+        .sc-green {
+            border-bottom-color: var(--green);
+        }
+
+        .sc-blue {
+            border-bottom-color: var(--blue);
+        }
+
+        .sc-orange {
+            border-bottom-color: var(--orange);
+        }
+
+        .sc-yellow {
+            border-bottom-color: var(--yellow);
+        }
+
+        /* ═══════ PANEL / WIDGET ═══════ */
+        .panel {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .pa-btn {
+            background: none;
+            border: none;
+            font-size: .8rem;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 3px 6px;
+            border-radius: 5px;
+            transition: all .18s;
+        }
+
+        .pa-btn:hover {
+            background: #f1f4f9;
+            color: var(--text);
+        }
+
+        .pa-btn.green:hover {
+            color: var(--green);
+        }
+
+        .pa-btn.red:hover {
+            color: var(--red);
+        }
+
+        .panel-body {
+            padding: 18px;
+        }
+
+        /* ═══════ CHART BAR ═══════ */
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .cl-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .78rem;
+            color: var(--text);
+        }
+
+        .cl-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            height: 160px;
+            padding-bottom: 8px;
+        }
+
+        .bar-grp {
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bar-item {
+            width: 28px;
+            border-radius: 6px 6px 0 0;
+            transition: opacity .2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .bar-item:hover {
+            opacity: .8;
+        }
+
+        .bar-item::after {
+            content: attr(data-val);
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: .68rem;
+            font-weight: 700;
+            color: var(--navy);
+            white-space: nowrap;
+            display: none;
+        }
+
+        .bar-item:hover::after {
+            display: block;
+        }
+
+        .bar-lbl {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .chart-y {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 160px;
+            margin-right: 6px;
+        }
+
+        .chart-y span {
+            font-size: .68rem;
+            color: var(--muted);
+        }
+
+        /* ═══════ CALENDAR ═══════ */
+        .cal-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cal-nav-btn {
+            background: #f1f4f9;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: .8rem;
+            color: var(--text);
+            transition: all .2s;
+        }
+
+        .cal-nav-btn:hover {
+            background: var(--yellow);
+            color: var(--navy);
+        }
+
+        .cal-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .cal-day-hdr {
+            text-align: center;
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--muted);
+            padding: 4px 0;
+        }
+
+        .cal-day {
+            text-align: center;
+            padding: 6px 4px;
+            font-size: .8rem;
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .cal-day:hover {
+            background: #f1f4f9;
+        }
+
+        .cal-day.today {
+            background: var(--yellow);
+            color: var(--navy);
+            font-weight: 700;
+        }
+
+        .cal-day.has-event {
+            background: #dbeafe;
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .cal-day.other-month {
+            color: var(--border);
+        }
+
+        /* ═══════ NOTICE BOARD ═══════ */
+        .notice-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f4f9;
+        }
+
+        .notice-item:last-child {
+            border-bottom: none;
+        }
+
+        .notice-date {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-bottom: 3px;
+        }
+
+        .notice-author {
+            font-size: .78rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .notice-author:hover {
+            text-decoration: underline;
+        }
+
+        .notice-ago {
+            font-size: .7rem;
+            color: var(--muted);
+            margin-left: 6px;
+        }
+
+        .notice-text {
+            font-size: .82rem;
+            color: var(--text);
+            margin-top: 2px;
+            line-height: 1.5;
+        }
+
+        /* ═══════ ACTIVITY ═══════ */
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .act-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .act-text {
+            font-size: .8rem;
+            color: var(--text);
+        }
+
+        .act-link {
+            color: var(--blue);
+            cursor: pointer;
+        }
+
+        .act-link:hover {
+            text-decoration: underline;
+        }
+
+        .act-time {
+            font-size: .7rem;
+            color: var(--muted);
+        }
+
+        /* ═══════ SOCIAL CARDS ═══════ */
+        .social-card {
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #fff;
+        }
+
+        .sc-fb {
+            background: #3b5998;
+        }
+
+        .sc-tw {
+            background: #1da1f2;
+        }
+
+        .sc-gp {
+            background: #dd4b39;
+        }
+
+        .sc-li {
+            background: #0077b5;
+        }
+
+        .sc-icon {
+            font-size: 1.6rem;
+            opacity: .85;
+        }
+
+        .sc-info {
+            flex: 1;
+        }
+
+        .sc-label {
+            font-size: .78rem;
+            opacity: .8;
+        }
+
+        .sc-num {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .sc-divider {
+            width: 1px;
+            background: rgba(255, 255, 255, .3);
+            height: 36px;
+        }
+
+        /* ═══════ TABLE ═══════ */
+        .tbl-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .tbl-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f4f9;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 7px 12px;
+        }
+
+        .tbl-search input {
+            border: none;
+            background: transparent;
+            font-size: .82rem;
+            color: var(--text);
+            outline: none;
+            width: 140px;
+        }
+
+        .tbl-search i {
+            color: var(--muted);
+            font-size: .82rem;
+        }
+
+        .btn-search {
+            background: var(--navy);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-family: 'Sora', sans-serif;
+            font-size: .8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .btn-search:hover {
+            background: var(--navy2);
+        }
+
+        .btn-add {
+            background: var(--yellow);
+            color: var(--navy);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-family: 'Sora', sans-serif;
+            font-size: .8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-add:hover {
+            background: var(--yellow2);
+        }
+
+        .tbl-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tbl-act-btn {
+            background: none;
+            border: none;
+            font-size: .88rem;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            border-radius: 5px;
+            display: grid;
+            place-items: center;
+            transition: all .18s;
+        }
+
+        .tbl-act-btn:hover {
+            background: #f1f4f9;
+        }
+
+        .tbl-view {
+            color: #3b82f6;
+        }
+
+        .tbl-edit {
+            color: var(--green);
+        }
+
+        .tbl-del {
+            color: var(--red);
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .custom-table thead th {
+            background: #f8fafc;
+            font-family: 'Sora', sans-serif;
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .custom-table thead th .sort-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 0 0 0 4px;
+            font-size: .68rem;
+        }
+
+        .custom-table tbody tr {
+            transition: background .18s;
+            cursor: pointer;
+        }
+
+        .custom-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .custom-table tbody td {
+            padding: 11px 16px;
+            font-size: .84rem;
+            border-bottom: 1px solid #f1f4f9;
+            vertical-align: middle;
+        }
+
+        .custom-table .chk {
+            width: 40px;
+        }
+
+        .tbl-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #3b82f6, #1a3fcc);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .75rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* ═══════ SKELETON LOADER ═══════ */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f4f9 25%, #e8ecf2 50%, #f1f4f9 75%);
+            background-size: 400% 100%;
+            animation: shimmer 1.4s ease infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        .sk-line {
+            height: 12px;
+            margin-bottom: 8px;
+        }
+
+        .sk-w30 {
+            width: 30%;
+        }
+
+        .sk-w50 {
+            width: 50%;
+        }
+
+        .sk-w70 {
+            width: 70%;
+        }
+
+        .sk-w90 {
+            width: 90%;
+        }
+
+        .sk-w100 {
+            width: 100%;
+        }
+
+        .sk-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sk-stat {
+            height: 90px;
+            border-radius: var(--radius);
+        }
+
+        .sk-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .sk-cell {
+            height: 12px;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        /* full page loader */
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, .95);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: opacity .4s;
+        }
+
+        .loader-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--yellow);
+            display: grid;
+            place-items: center;
+        }
+
+        .loader-logo svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--navy);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loader-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--yellow), var(--blue));
+            border-radius: 2px;
+            animation: loadFill 1.8s ease forwards;
+        }
+
+        @keyframes loadFill {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        .loader-text {
+            font-family: 'Sora', sans-serif;
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        /* ═══════ TOAST ═══════ */
+        .toast-wrap {
+            position: fixed;
+            top: 72px;
+            right: 20px;
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-item {
+            background: #fff;
+            border-left: 4px solid;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .12);
+            border-radius: 6px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            min-width: 280px;
+            max-width: 340px;
+            animation: toastIn .35s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        @keyframes toastIn {
+            from {
+                transform: translateX(340px);
+                opacity: 0;
+            }
+
+            to {
+                transform: none;
+                opacity: 1;
+            }
+        }
+
+        .toast-item.success {
+            border-color: var(--green);
+        }
+
+        .toast-item.error {
+            border-color: var(--red);
+        }
+
+        .toast-item.info {
+            border-color: var(--blue);
+        }
+
+        .toast-item.warning {
+            border-color: var(--yellow);
+        }
+
+        .toast-icon {
+            font-size: 1rem;
+            margin-top: 2px;
+        }
+
+        .toast-item.success .toast-icon {
+            color: var(--green);
+        }
+
+        .toast-item.error .toast-icon {
+            color: var(--red);
+        }
+
+        .toast-item.info .toast-icon {
+            color: var(--blue);
+        }
+
+        .toast-item.warning .toast-icon {
+            color: var(--yellow2);
+        }
+
+        .toast-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .toast-msg {
+            font-size: .77rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: .8rem;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 2px;
+            transition: color .2s;
+        }
+
+        .toast-close:hover {
+            color: var(--text);
+        }
+
+        /* ═══════ FOOTER ═══════ */
+        .main-footer {
+            background: #fff;
+            border-top: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: .78rem;
+            color: var(--muted);
+        }
+
+        .main-footer strong {
+            color: var(--navy);
+        }
+
+        .main-footer a {
+            color: var(--blue);
+        }
+
+        .footer-tech {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-badge {
+            background: var(--navy);
+            color: var(--yellow);
+            font-family: 'Sora', sans-serif;
+            font-size: .7rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+        }
+
+        /* mobile overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            z-index: 1039;
+        }
+
+        @media(max-width:991px) {
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        /* ═══════ RESPONSIVE ═══════ */
+        @media(max-width:768px) {
+            .hdr-search {
+                display: none;
+            }
+
+            .chart-bars {
+                gap: 12px;
+            }
+        }
+
+        @media(max-width:576px) {
+            .hdr-title {
+                display: none;
+            }
+
+            .social-card {
+                padding: 12px 14px;
+            }
+
+            .sc-num {
+                font-size: 1.15rem;
+            }
+
+            .panel-header {
+                padding: 11px 14px;
+            }
+
+            .panel-body {
+                padding: 12px 14px;
+            }
+        }
+
+        /* ACTIVE PAGE: students table hidden by default */
+        #page-dashboard {
+            display: block;
+        }
+
+        #page-students {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══ PAGE LOADER ═══ -->
+    <div id="pageLoader">
+        <div class="loader-logo">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+        </div>
+        <div class="loader-bar">
+            <div class="loader-fill"></div>
+        </div>
+        <div class="loader-text">Loading Vidyasetu...</div>
+    </div>
+
+    <!-- ═══ TOAST CONTAINER ═══ -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- ═══ LAYOUT ═══ -->
+    <div class="layout">
+
+        <!-- ════════════════════════
+     SIDEBAR
+════════════════════════ -->
+        <aside id="sidebar">
+            <!-- Brand -->
+            <div class="sb-brand">
+                <div class="sb-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <span class="sb-name">Vidyasetu<sup class="sb-tm">TM</sup></span>
+                <button class="sb-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+            </div>
+
+            <!-- Nav -->
+            <nav class="sb-nav">
+                <ul style="list-style:none;padding:0;">
+
+                    <li class="nav-item">
+                        <div class="nav-link-item active open" data-tip="Dashboard"
+                            onclick="toggleMenu(this,'menu-dash');navTo('page-dashboard')">
+                            <span class="nav-icon"><i class="fas fa-th-large"></i></span>
+                            <span class="nav-label">Dashboard</span>
+                            <i class="fas fa-chevron-right nav-arrow"></i>
+                        </div>
+                        <ul class="sub-menu open" id="menu-dash">
+                            <li><a href="#" class="active" onclick="return false">Admin</a></li>
+                            <li><a href="#">Student</a></li>
+                            <li><a href="#">Parents</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Students"
+                            onclick="toggleMenu(this,'menu-students');navTo('page-students')">
+                            <span class="nav-icon"><i class="fas fa-user-graduate"></i></span>
+                            <span class="nav-label">Students</span>
+                            <span class="nav-badge">50K</span>
+                            <i class="fas fa-chevron-right nav-arrow"></i>
+                        </div>
+                        <ul class="sub-menu" id="menu-students">
+                            <li><a href="#" onclick="navTo('page-students');return false">All Students</a></li>
+                            <li><a href="#">Student Details</a></li>
+                            <li><a href="#">Admit Form</a></li>
+                            <li><a href="#">Student Promotion</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Teachers" onclick="toggleMenu(this,'menu-teachers')">
+                            <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                            <span class="nav-label">Teachers</span>
+                            <i class="fas fa-chevron-right nav-arrow"></i>
+                        </div>
+                        <ul class="sub-menu" id="menu-teachers">
+                            <li><a href="#">All Teachers</a></li>
+                            <li><a href="#">Add Teacher</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Parents" onclick="toggleMenu(this,'menu-parents')">
+                            <span class="nav-icon"><i class="fas fa-users"></i></span>
+                            <span class="nav-label">Parents</span>
+                            <i class="fas fa-chevron-right nav-arrow"></i>
+                        </div>
+                        <ul class="sub-menu" id="menu-parents">
+                            <li><a href="#">All Parents</a></li>
+                            <li><a href="#">Add Parent</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <div class="sb-section">Academic</div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Library" onclick="toggleMenu(this,'menu-lib')">
+                            <span class="nav-icon"><i class="fas fa-book"></i></span>
+                            <span class="nav-label">Library</span>
+                            <i class="fas fa-chevron-right nav-arrow"></i>
+                        </div>
+                        <ul class="sub-menu" id="menu-lib">
+                            <li><a href="#">Books</a></li>
+                            <li><a href="#">Issue / Return</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Class" onclick="toggleMenu(this,'menu-class')">
+                            <span class="nav-icon"><i class="fas fa-layer-group"></i></span>
+                            <span class="nav-label">Class</span>
+                            <i class="fas fa-chevron-right nav-arrow"></i>
+                        </div>
+                        <ul class="sub-menu" id="menu-class">
+                            <li><a href="#">Manage Classes</a></li>
+                            <li><a href="#">Sections</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Subject">
+                            <span class="nav-icon"><i class="fas fa-flask"></i></span>
+                            <span class="nav-label">Subject</span>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Class Routine">
+                            <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+                            <span class="nav-label">Class Routine</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="sb-section">Operations</div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Attendance">
+                            <span class="nav-icon"><i class="fas fa-clipboard-check"></i></span>
+                            <span class="nav-label">Attendance</span>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Exam" onclick="toggleMenu(this,'menu-exam')">
+                            <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                            <span class="nav-label">Exam</span>
+                            <i class="fas fa-chevron-right nav-arrow"></i>
+                        </div>
+                        <ul class="sub-menu" id="menu-exam">
+                            <li><a href="#">Schedule</a></li>
+                            <li><a href="#">Results</a></li>
+                            <li><a href="#">Report Card</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Transport">
+                            <span class="nav-icon"><i class="fas fa-bus"></i></span>
+                            <span class="nav-label">Transport</span>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Hostel">
+                            <span class="nav-icon"><i class="fas fa-building"></i></span>
+                            <span class="nav-label">Hostel</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="sb-section">Communication</div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Notice">
+                            <span class="nav-icon"><i class="fas fa-bell"></i></span>
+                            <span class="nav-label">Notice</span>
+                            <span class="nav-badge">3</span>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Message">
+                            <span class="nav-icon"><i class="fas fa-envelope"></i></span>
+                            <span class="nav-label">Message</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="sb-section">More</div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Account">
+                            <span class="nav-icon"><i class="fas fa-rupee-sign"></i></span>
+                            <span class="nav-label">Account</span>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="Map">
+                            <span class="nav-icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <span class="nav-label">Map</span>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link-item" data-tip="UI Elements">
+                            <span class="nav-icon"><i class="fas fa-puzzle-piece"></i></span>
+                            <span class="nav-label">UI Elements</span>
+                        </div>
+                    </li>
+
+                </ul>
+            </nav>
+
+            <!-- Footer -->
+            <div class="sb-footer">
+                <div class="sb-footer-avatar">KF</div>
+                <div class="sb-footer-text"><strong>Kazi Fahim</strong>Administrator</div>
+            </div>
+        </aside>
+
+        <!-- Overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+        <!-- ════════════════════════
+        MAIN WRAP
+        ════════════════════════ -->
+        <div class="main-wrap" id="mainWrap">
+
+            <!-- ═══ TOP HEADER ═══ -->
+            <header class="top-header">
+                <button class="hdr-mobile-toggle" onclick="openMobileSidebar()"><i class="fas fa-bars"></i></button>
+                <div class="hdr-title">Welcome To <span>Vidyasetu</span> School Management System</div>
+
+                <div class="hdr-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search here...">
+                </div>
+
+                <div class="hdr-actions">
+                    <!-- Language -->
+                    <div style="position:relative;">
+                        <button class="hdr-icon-btn" title="Language" onclick="toggleDD('langDD')"><i
+                                class="fas fa-globe"></i></button>
+                        <div class="hdr-dropdown" id="langDD" style="min-width:140px;">
+                            <div class="dd-item"><i class="fas fa-check" style="color:var(--green);"></i> English</div>
+                            <div class="dd-item"><i class="fas fa-circle" style="opacity:0;"></i> हिंदी</div>
+                            <div class="dd-item"><i class="fas fa-circle" style="opacity:0;"></i> বাংলা</div>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div style="position:relative;">
+                        <button class="hdr-icon-btn" onclick="toggleDD('msgDD')">
+                            <i class="fas fa-envelope"></i>
+                            <span class="hdr-badge badge-yellow">5</span>
+                        </button>
+                        <div class="hdr-dropdown notif-dd" id="msgDD">
+                            <div class="notif-head">
+                                <h6>Messages</h6><span style="font-size:.75rem;color:var(--blue);cursor:pointer;">Mark
+                                    all read</span>
+                            </div>
+                            <div class="notif-item">
+                                <div class="notif-dot" style="background:var(--blue);"></div>
+                                <div>
+                                    <div class="notif-text">Priya Gupta sent you a message</div>
+                                    <div class="notif-time">2 min ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-item">
+                                <div class="notif-dot" style="background:var(--green);"></div>
+                                <div>
+                                    <div class="notif-text">Fee reminder sent to parents</div>
+                                    <div class="notif-time">15 min ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-item">
+                                <div class="notif-dot" style="background:var(--yellow);"></div>
+                                <div>
+                                    <div class="notif-text">New admission request received</div>
+                                    <div class="notif-time">1 hr ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-foot">View all messages</div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div style="position:relative;">
+                        <button class="hdr-icon-btn" onclick="toggleDD('notifDD')">
+                            <i class="fas fa-bell"></i>
+                            <span class="hdr-badge badge-red">8</span>
+                        </button>
+                        <div class="hdr-dropdown notif-dd" id="notifDD">
+                            <div class="notif-head">
+                                <h6>Notifications</h6><span
+                                    style="font-size:.75rem;color:var(--blue);cursor:pointer;">Clear all</span>
+                            </div>
+                            <div class="notif-item">
+                                <div class="notif-dot" style="background:var(--green);"></div>
+                                <div>
+                                    <div class="notif-text">Exam schedule published for Class 10</div>
+                                    <div class="notif-time">5 min ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-item">
+                                <div class="notif-dot" style="background:var(--red);"></div>
+                                <div>
+                                    <div class="notif-text">3 students marked absent today</div>
+                                    <div class="notif-time">20 min ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-item">
+                                <div class="notif-dot" style="background:var(--blue);"></div>
+                                <div>
+                                    <div class="notif-text">Fee collection report ready</div>
+                                    <div class="notif-time">1 hr ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-item">
+                                <div class="notif-dot" style="background:var(--yellow);"></div>
+                                <div>
+                                    <div class="notif-text">New teacher Anjali Kumari onboarded</div>
+                                    <div class="notif-time">2 hr ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-foot">View all notifications</div>
+                        </div>
+                    </div>
+
+                    <!-- Profile -->
+                    <div style="position:relative;">
+                        <button class="profile-btn" onclick="toggleDD('profileDD')">
+                            <div class="profile-avatar">KF</div>
+                            <div class="profile-info d-none d-md-block">
+                                <div class="profile-name">Kazi Fahim</div>
+                                <div class="profile-role">Admin</div>
+                            </div>
+                            <i class="fas fa-chevron-down"
+                                style="font-size:.65rem;color:var(--muted);margin-left:4px;"></i>
+                        </button>
+                        <div class="hdr-dropdown" id="profileDD" style="right:0;">
+                            <div class="dd-header">
+                                <div
+                                    style="font-family:'Sora',sans-serif;font-size:.85rem;font-weight:700;color:var(--navy);">
+                                    Kazi Fahim</div>
+                                <div style="font-size:.75rem;color:var(--muted);">kazi@vidyasetu.in</div>
+                                <div style="font-size:.72rem;color:var(--blue);margin-top:2px;">Administrator</div>
+                            </div>
+                            <div class="dd-item"><i class="fas fa-user"></i> My Profile</div>
+                            <div class="dd-item"><i class="fas fa-cog"></i> Settings</div>
+                            <div class="dd-item"><i class="fas fa-shield-alt"></i> Privacy & Security</div>
+                            <div class="dd-item"><i class="fas fa-question-circle"></i> Help Center</div>
+                            <div class="dd-divider"></div>
+                            <div class="dd-item dd-danger"
+                                onclick="showToast('Logged out','You have been signed out successfully','info')"><i
+                                    class="fas fa-sign-out-alt"></i> Sign Out</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ═══ CONTENT ═══ -->
+            <div class="content">
+                <!-- ─────────────────────────
+                    PAGE: DASHBOARD
+                ───────────────────────── -->
+                <div id="page-dashboard">
+                    <div class="page-breadcrumb">
+                        <a href="#">Home</a>
+                        <i class="fas fa-angle-right" style="font-size:.7rem;"></i>
+                        <span>Admin Dashboard</span>
+                    </div>
+
+                    <!-- STAT CARDS -->
+                    <div class="row g-3 mb-4" id="statCards">
+                        <!-- skeleton initially, replaced by JS -->
+                        <div class="col-6 col-lg-3">
+                            <div class="skeleton sk-stat"></div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="skeleton sk-stat"></div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="skeleton sk-stat"></div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="skeleton sk-stat"></div>
+                        </div>
+                    </div>
+
+                    <!-- CHART + SOCIAL -->
+                    <div class="row g-3 mb-3">
+                        <!-- Fee Chart -->
+                        <div class="col-lg-8">
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <span class="panel-title"><i class="fas fa-chart-bar"
+                                            style="color:var(--blue);margin-right:8px;"></i>Fees Collection &
+                                        Expenses</span>
+                                    <div class="panel-actions">
+                                        <button class="pa-btn"><i class="fas fa-chevron-down"></i></button>
+                                        <button class="pa-btn green"><i class="fas fa-rotate-right"></i></button>
+                                        <button class="pa-btn red"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-legend">
+                                        <div class="cl-item">
+                                            <div class="cl-dot" style="background:#3b82f6;"></div>₹10,000 Collections
+                                        </div>
+                                        <div class="cl-item">
+                                            <div class="cl-dot" style="background:#ef4444;"></div>₹8,000 Fees
+                                        </div>
+                                        <div class="cl-item">
+                                            <div class="cl-dot" style="background:#f5a623;"></div>₹5,000 Expenses
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:0;align-items:flex-end;">
+                                        <div class="chart-y">
+                                            <span>100</span><span>75</span><span>50</span><span>25</span><span>0</span>
+                                        </div>
+                                        <div class="chart-bars" style="flex:1;">
+                                            <div class="bar-grp">
+                                                <div class="bar-item" data-val="₹10,000"
+                                                    style="background:#3b82f6;height:120px;"></div>
+                                                <div class="bar-lbl">Collections</div>
+                                            </div>
+                                            <div class="bar-grp">
+                                                <div class="bar-item" data-val="₹8,000"
+                                                    style="background:#ef4444;height:96px;"></div>
+                                                <div class="bar-lbl">Fees</div>
+                                            </div>
+                                            <div class="bar-grp">
+                                                <div class="bar-item" data-val="₹5,000"
+                                                    style="background:#f5a623;height:60px;"></div>
+                                                <div class="bar-lbl">Expenses</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Social -->
+                        <div class="col-lg-4">
+                            <div class="row g-3">
+                                <div class="col-6 col-lg-12 col-xl-6">
+                                    <div class="social-card sc-fb">
+                                        <i class="fab fa-facebook-f sc-icon"></i>
+                                        <div class="sc-divider"></div>
+                                        <div class="sc-info">
+                                            <div class="sc-label">Like us on Facebook</div>
+                                            <div class="sc-num">30,000</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-12 col-xl-6">
+                                    <div class="social-card sc-tw">
+                                        <i class="fab fa-twitter sc-icon"></i>
+                                        <div class="sc-divider"></div>
+                                        <div class="sc-info">
+                                            <div class="sc-label">Follow us on Twitter</div>
+                                            <div class="sc-num">13,000</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-12 col-xl-6">
+                                    <div class="social-card sc-gp">
+                                        <i class="fab fa-google-plus-g sc-icon"></i>
+                                        <div class="sc-divider"></div>
+                                        <div class="sc-info">
+                                            <div class="sc-label">Follow on Google+</div>
+                                            <div class="sc-num">9,000</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-12 col-xl-6">
+                                    <div class="social-card sc-li">
+                                        <i class="fab fa-linkedin-in sc-icon"></i>
+                                        <div class="sc-divider"></div>
+                                        <div class="sc-info">
+                                            <div class="sc-label">Follow on LinkedIn</div>
+                                            <div class="sc-num">18,000</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CALENDAR + NOTICE + ACTIVITY -->
+                    <div class="row g-3">
+                        <!-- Calendar -->
+                        <div class="col-lg-5">
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <span class="panel-title"><i class="fas fa-calendar"
+                                            style="color:var(--yellow2);margin-right:8px;"></i>Event Calendar</span>
+                                    <div class="panel-actions">
+                                        <button class="pa-btn"><i class="fas fa-chevron-down"></i></button>
+                                        <button class="pa-btn green"><i class="fas fa-rotate-right"></i></button>
+                                        <button class="pa-btn red"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <div class="panel-body" id="calendarWidget"></div>
+                            </div>
+                        </div>
+                        <!-- Notice Board -->
+                        <div class="col-lg-4">
+                            <div class="panel" style="height:100%;">
+                                <div class="panel-header">
+                                    <span class="panel-title"><i class="fas fa-clipboard"
+                                            style="color:var(--orange);margin-right:8px;"></i>Notice Board</span>
+                                    <div class="panel-actions">
+                                        <button class="pa-btn"><i class="fas fa-chevron-down"></i></button>
+                                        <button class="pa-btn green"><i class="fas fa-rotate-right"></i></button>
+                                        <button class="pa-btn red"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <div class="panel-body" style="max-height:320px;overflow-y:auto;">
+                                    <div class="notice-item">
+                                        <div class="notice-date">16 May, 2024</div>
+                                        <div><span class="notice-author" style="color:var(--blue);">Rajesh
+                                                Singh</span><span class="notice-ago">5 min ago</span></div>
+                                        <div class="notice-text">Annual Sports Day scheduled for 20th June. All students
+                                            must participate in at least one event.</div>
+                                    </div>
+                                    <div class="notice-item">
+                                        <div class="notice-date">16 May, 2024</div>
+                                        <div><span class="notice-author" style="color:var(--orange);">Priya
+                                                Gupta</span><span class="notice-ago">55 min ago</span></div>
+                                        <div class="notice-text">Fee submission deadline extended to 25th May. Late fee
+                                            ₹200 will apply after that date.</div>
+                                    </div>
+                                    <div class="notice-item">
+                                        <div class="notice-date">16 May, 2024</div>
+                                        <div><span class="notice-author" style="color:var(--blue);">Rajesh
+                                                Singh</span><span class="notice-ago">5 min ago</span></div>
+                                        <div class="notice-text">Parent-teacher meeting on 18th May at 10 AM in the
+                                            school auditorium.</div>
+                                    </div>
+                                    <div class="notice-item">
+                                        <div class="notice-date">15 May, 2024</div>
+                                        <div><span class="notice-author" style="color:var(--green);">Anjali
+                                                Kumari</span><span class="notice-ago">1 hr ago</span></div>
+                                        <div class="notice-text">School will remain closed on 19th May for local
+                                            elections. Classes resume on 20th.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Recent Activities -->
+                        <div class="col-lg-3">
+                            <div class="panel" style="height:100%;">
+                                <div class="panel-header">
+                                    <span class="panel-title"><i class="fas fa-bolt"
+                                            style="color:var(--purple);margin-right:8px;"></i>Recent Activities</span>
+                                    <div class="panel-actions">
+                                        <button class="pa-btn"><i class="fas fa-chevron-down"></i></button>
+                                        <button class="pa-btn green"><i class="fas fa-rotate-right"></i></button>
+                                        <button class="pa-btn red"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <div class="panel-body" style="max-height:320px;overflow-y:auto;">
+                                    <div class="activity-item">
+                                        <div class="act-dot" style="background:var(--blue);"></div>
+                                        <div>
+                                            <div class="act-time">9 min ago</div>
+                                            <div class="act-text">You followed <span class="act-link">Olivia
+                                                    Williamson</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="act-dot" style="background:var(--green);"></div>
+                                        <div>
+                                            <div class="act-time">20 min ago</div>
+                                            <div class="act-text">You <span class="act-link">Subscribed</span> to Harold
+                                                Fuller</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="act-dot" style="background:var(--yellow);"></div>
+                                        <div>
+                                            <div class="act-time">30 min ago</div>
+                                            <div class="act-text">You updated your profile picture</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="act-dot" style="background:var(--red);"></div>
+                                        <div>
+                                            <div class="act-time">35 min ago</div>
+                                            <div class="act-text">You deleted homepage.psd</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="act-dot" style="background:var(--purple);"></div>
+                                        <div>
+                                            <div class="act-time">40 min ago</div>
+                                            <div class="act-text">Exam schedule updated for Class 10</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="act-dot" style="background:var(--teal);"></div>
+                                        <div>
+                                            <div class="act-time">1 hr ago</div>
+                                            <div class="act-text">Fee report generated for April 2024</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /page-dashboard -->
+
+                <!-- ─────────────────────────
+                    PAGE: ALL STUDENTS
+                ───────────────────────── -->
+                <div id="page-students">
+                    <div class="page-breadcrumb">
+                        <a href="#" onclick="navTo('page-dashboard');return false;">Home</a>
+                        <i class="fas fa-angle-right" style="font-size:.7rem;"></i>
+                        <span>All Students</span>
+                    </div>
+
+                    <div class="panel">
+                        <!-- toolbar -->
+                        <div class="tbl-toolbar">
+                            <div
+                                style="font-family:'Sora',sans-serif;font-size:.95rem;font-weight:700;color:var(--navy);flex:1;">
+                                All Students
+                            </div>
+                            <div class="tbl-search">
+                                <i class="fas fa-hashtag"></i>
+                                <input type="text" placeholder="# Roll Type Here..." id="rollSearch"
+                                    oninput="filterTable()">
+                            </div>
+                            <div class="tbl-search">
+                                <i class="fas fa-layer-group"></i>
+                                <input type="text" placeholder="Type Section..." id="sectionSearch"
+                                    oninput="filterTable()">
+                            </div>
+                            <button class="btn-search"
+                                onclick="showToast('Searching...','Filtering student records','info')"><i
+                                    class="fas fa-search" style="margin-right:5px;"></i>SEARCH</button>
+                            <button class="btn-add"
+                                onclick="showToast('Add Student','Opening admission form','success')"><i
+                                    class="fas fa-plus"></i> Add Student</button>
+                        </div>
+
+                        <!-- table skeleton -->
+                        <div id="tblSkeleton">
+                            <div class="sk-row">
+                                <div class="skeleton sk-circle"></div>
+                                <div class="skeleton sk-cell" style="max-width:80px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                                <div class="skeleton sk-cell" style="max-width:60px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                            </div>
+                            <div class="sk-row">
+                                <div class="skeleton sk-circle"></div>
+                                <div class="skeleton sk-cell" style="max-width:70px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                                <div class="skeleton sk-cell" style="max-width:50px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                            </div>
+                            <div class="sk-row">
+                                <div class="skeleton sk-circle"></div>
+                                <div class="skeleton sk-cell" style="max-width:90px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                                <div class="skeleton sk-cell" style="max-width:70px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                            </div>
+                            <div class="sk-row">
+                                <div class="skeleton sk-circle"></div>
+                                <div class="skeleton sk-cell" style="max-width:60px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                                <div class="skeleton sk-cell" style="max-width:80px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                            </div>
+                            <div class="sk-row">
+                                <div class="skeleton sk-circle"></div>
+                                <div class="skeleton sk-cell" style="max-width:85px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                                <div class="skeleton sk-cell" style="max-width:55px;"></div>
+                                <div class="skeleton sk-cell"></div>
+                            </div>
+                        </div>
+
+                        <!-- actual table -->
+                        <div class="table-responsive" id="studentTableWrap" style="display:none;">
+                            <table class="custom-table" id="studentTable">
+                                <thead>
+                                    <tr>
+                                        <th class="chk"><input type="checkbox" id="checkAll" onchange="toggleAll(this)">
+                                        </th>
+                                        <th>Roll <button class="sort-btn" onclick="sortTable(1)"><i
+                                                    class="fas fa-sort"></i></button></th>
+                                        <th>Photo</th>
+                                        <th>Name <button class="sort-btn" onclick="sortTable(3)"><i
+                                                    class="fas fa-sort"></i></button></th>
+                                        <th>Gender</th>
+                                        <th>Parents Name</th>
+                                        <th>Class <button class="sort-btn" onclick="sortTable(6)"><i
+                                                    class="fas fa-sort"></i></button></th>
+                                        <th>Section</th>
+                                        <th>Address</th>
+                                        <th>Date of Birth <button class="sort-btn"><i class="fas fa-sort"></i></button>
+                                        </th>
+                                        <th>Mobile No</th>
+                                        <th>E-mail</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentTbody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- pagination -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px;"
+                            id="tblPagination" style="display:none;">
+                            <span style="font-size:.8rem;color:var(--muted);">Showing <strong>1-17</strong> of
+                                <strong>50,000</strong> students</span>
+                            <div style="display:flex;gap:4px;">
+                                <button class="btn-search" style="padding:5px 10px;"><i
+                                        class="fas fa-angle-left"></i></button>
+                                <button class="btn-search">1</button>
+                                <button class="btn-search"
+                                    style="background:var(--yellow);color:var(--navy);">2</button>
+                                <button class="btn-search">3</button>
+                                <button class="btn-search" style="padding:5px 10px;"><i
+                                        class="fas fa-angle-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /page-students -->
+
+            </div><!-- /content -->
+
+            <!-- ═══ FOOTER ═══ -->
+            <footer class="main-footer">
+                <div>© 2024 <strong>Vidyasetu</strong> School Management System. All rights reserved.</div>
+                <div class="footer-tech">
+                    <span>Technology Partner:</span>
+                    <span class="tech-badge">Computer Ed.</span>
+                    <a href="#" style="color:var(--orange);font-weight:700;">vidyasetu.in</a>
+                </div>
+            </footer>
+
+        </div><!-- /main-wrap -->
+    </div><!-- /layout -->
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* ═══════════════════════════════
+           PAGE LOADER
+        ═══════════════════════════════ */
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                var l = document.getElementById('pageLoader');
+                l.style.opacity = '0';
+                setTimeout(function () { l.style.display = 'none'; loadStatCards(); }, 400);
+            }, 2000);
+        });
+
+        /* ═══════════════════════════════
+           SIDEBAR TOGGLE
+        ═══════════════════════════════ */
+        var sidebarCollapsed = false;
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            sidebarCollapsed = !sidebarCollapsed;
+            document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
+            document.getElementById('mainWrap').classList.toggle('collapsed', sidebarCollapsed);
+        });
+        function openMobileSidebar() {
+            document.getElementById('sidebar').classList.add('mobile-open');
+            document.getElementById('sidebarOverlay').classList.add('show');
+        }
+        function closeMobileSidebar() {
+            document.getElementById('sidebar').classList.remove('mobile-open');
+            document.getElementById('sidebarOverlay').classList.remove('show');
+        }
+
+        /* sub-menu toggle */
+        function toggleMenu(el, menuId) {
+            var all = document.querySelectorAll('.nav-link-item');
+            all.forEach(function (i) { if (i !== el) { i.classList.remove('active', 'open'); } });
+            el.classList.toggle('open');
+            el.classList.add('active');
+            var menus = document.querySelectorAll('.sub-menu');
+            menus.forEach(function (m) { if (m.id !== menuId) m.classList.remove('open'); });
+            var menu = document.getElementById(menuId);
+            if (menu) menu.classList.toggle('open');
+        }
+
+        /* ═══════════════════════════════
+           NAVIGATION PAGES
+        ═══════════════════════════════ */
+        function navTo(pageId) {
+            document.querySelectorAll('[id^="page-"]').forEach(function (p) { p.style.display = 'none'; });
+            document.getElementById(pageId).style.display = 'block';
+            if (pageId === 'page-students') loadStudentTable();
+            closeMobileSidebar();
+        }
+
+        /* ═══════════════════════════════
+           HEADER DROPDOWNS
+        ═══════════════════════════════ */
+        function toggleDD(id) {
+            var all = ['langDD', 'msgDD', 'notifDD', 'profileDD'];
+            all.forEach(function (did) {
+                if (did !== id) document.getElementById(did).classList.remove('show');
+            });
+            document.getElementById(id).classList.toggle('show');
+        }
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.hdr-actions'))
+                ['langDD', 'msgDD', 'notifDD', 'profileDD'].forEach(function (id) { document.getElementById(id).classList.remove('show'); });
+        });
+
+        /* ═══════════════════════════════
+           TOAST NOTIFICATIONS
+        ═══════════════════════════════ */
+        var toastIcons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle' };
+        function showToast(title, msg, type) {
+            type = type || 'info';
+            var wrap = document.getElementById('toastWrap');
+            var div = document.createElement('div');
+            div.className = 'toast-item ' + type;
+            div.innerHTML = '<i class="fas ' + toastIcons[type] + ' toast-icon"></i><div><div class="toast-title">' + title + '</div><div class="toast-msg">' + msg + '</div></div><button class="toast-close" onclick="this.closest(\'.toast-item\').remove()"><i class="fas fa-times"></i></button>';
+            wrap.appendChild(div);
+            setTimeout(function () { if (div.parentNode) div.style.opacity = '0'; setTimeout(function () { if (div.parentNode) div.remove(); }, 400); }, 4000);
+        }
+
+        /* ═══════════════════════════════
+           STAT CARDS (skeleton → real)
+        ═══════════════════════════════ */
+        function loadStatCards() {
+            var stats = [
+                { icon: 'fa-user-graduate', val: '50,000', lbl: 'Students', trend: '+320 this month', up: true, ic: 'si-green', bc: 'sc-green' },
+                { icon: 'fa-chalkboard-teacher', val: '10,000', lbl: 'Teachers', trend: '+45 this month', up: true, ic: 'si-blue', bc: 'sc-blue' },
+                { icon: 'fa-users', val: '15,000', lbl: 'Parents', trend: '+210 this month', up: true, ic: 'si-orange', bc: 'sc-orange' },
+                { icon: 'fa-rupee-sign', val: '₹30,000', lbl: 'Total Earnings', trend: '+₹4,200 this week', up: true, ic: 'si-yellow', bc: 'sc-yellow' },
+            ];
+            var container = document.getElementById('statCards');
+            container.innerHTML = '';
+            stats.forEach(function (s) {
+                var col = document.createElement('div');
+                col.className = 'col-6 col-lg-3';
+                col.innerHTML = '<div class="stat-card ' + s.bc + '"><div class="stat-icon ' + s.ic + '"><i class="fas ' + s.icon + '"></i></div><div><div class="stat-val">' + s.val + '</div><div class="stat-lbl">' + s.lbl + '</div><div class="stat-trend ' + (s.up ? 'trend-up' : 'trend-dn') + '"><i class="fas fa-arrow-' + (s.up ? 'up' : 'down') + '"></i> ' + s.trend + '</div></div></div>';
+                container.appendChild(col);
+            });
+        }
+
+        /* ═══════════════════════════════
+           CALENDAR
+        ═══════════════════════════════ */
+        var calDate = new Date(2024, 3, 1); // April 2024
+        function buildCalendar() {
+            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            var today = 14; var events = [18]; var highlight = [27];
+            var y = calDate.getFullYear(), m = calDate.getMonth();
+            var first = new Date(y, m, 1).getDay();
+            var daysInMonth = new Date(y, m + 1, 0).getDate();
+            var daysInPrev = new Date(y, m, 0).getDate();
+            var html = '<div class="cal-nav">';
+            html += '<button class="cal-nav-btn" onclick="prevMonth()"><i class="fas fa-angle-left"></i></button>';
+            html += '<span class="cal-title">' + months[m] + ' ' + y + '</span>';
+            html += '<button class="cal-nav-btn" onclick="nextMonth()"><i class="fas fa-angle-right"></i></button>';
+            html += '</div><div class="cal-grid">';
+            days.forEach(function (d) { html += '<div class="cal-day-hdr">' + d + '</div>'; });
+            for (var i = 0; i < first; i++) { html += '<div class="cal-day other-month">' + (daysInPrev - first + i + 1) + '</div>'; }
+            for (var d = 1; d <= daysInMonth; d++) {
+                var cls = 'cal-day';
+                if (d === today) cls += ' today';
+                else if (events.indexOf(d) > -1) cls += ' has-event';
+                else if (highlight.indexOf(d) > -1) cls += ' has-event';
+                html += '<div class="' + cls + '">' + d + '</div>';
+            }
+            var rem = (7 - ((first + daysInMonth) % 7)) % 7;
+            for (var r = 1; r <= rem; r++)html += '<div class="cal-day other-month">' + r + '</div>';
+            html += '</div>';
+            document.getElementById('calendarWidget').innerHTML = html;
+        }
+        function prevMonth() { calDate.setMonth(calDate.getMonth() - 1); buildCalendar(); }
+        function nextMonth() { calDate.setMonth(calDate.getMonth() + 1); buildCalendar(); }
+        buildCalendar();
+
+        /* ═══════════════════════════════
+           STUDENT TABLE
+        ═══════════════════════════════ */
+        var studentData = [
+            { roll: '#2901', name: 'Richi Rozario', gender: 'Female', parent: 'David Smith', cls: '1', sec: 'A', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'RR', avc: '#3b82f6' },
+            { roll: '#2902', name: 'Kazi Fahim', gender: 'Male', parent: 'Mike Hussy', cls: '2', sec: 'B', addr: '59, Street, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'KF', avc: '#10b981' },
+            { roll: '#2903', name: 'Richi Rozario', gender: 'Female', parent: 'David Smith', cls: '1', sec: 'A', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'RR', avc: '#f97316' },
+            { roll: '#2904', name: 'Kazi Fahim', gender: 'Male', parent: 'Mike Hussy', cls: '2', sec: 'B', addr: '59, Street, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'KF', avc: '#7c3aed' },
+            { roll: '#2905', name: 'Richi Rozario', gender: 'Female', parent: 'David Smith', cls: '1', sec: 'C', addr: '90 Street, Heavy, Resde', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'RR', avc: '#ef4444' },
+            { roll: '#2906', name: 'Richi Rozario', gender: 'Female', parent: 'David Smith', cls: '3', sec: 'A', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'RR', avc: '#0891b2' },
+            { roll: '#2907', name: 'Nchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'NR', avc: '#f5a623' },
+            { roll: '#2908', name: 'Mchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'MR', avc: '#3b82f6' },
+            { roll: '#2909', name: 'Kazi Fahim', gender: 'Male', parent: 'Mike Hussy', cls: '2', sec: 'B', addr: '59, Street, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'KF', avc: '#10b981' },
+            { roll: '#2910', name: 'Nchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'NR', avc: '#7c3aed' },
+            { roll: '#2911', name: 'Nchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'NR', avc: '#f97316' },
+            { roll: '#2912', name: 'Kazi Fahim', gender: 'Male', parent: 'Mike Hussy', cls: '2', sec: 'B', addr: '59, Street, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'KF', avc: '#ef4444' },
+            { roll: '#2913', name: 'Dchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'DR', avc: '#0891b2' },
+            { roll: '#2914', name: 'Bchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'BR', avc: '#f5a623' },
+            { roll: '#2915', name: 'Nchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'NR', avc: '#3b82f6' },
+            { roll: '#2916', name: 'Rozario Geo', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'RG', avc: '#10b981' },
+            { roll: '#2917', name: 'Nchi Rozario', gender: 'Female', parent: 'David Smith', cls: '5', sec: 'D', addr: 'TA-110, North Sydney', dob: '10/03/2010', mob: '+8812005098', email: 'ndisons@gmail.com', av: 'NR', avc: '#7c3aed' },
+        ];
+        var tableLoaded = false;
+        function loadStudentTable() {
+            if (tableLoaded) return;
+            document.getElementById('tblSkeleton').style.display = 'block';
+            document.getElementById('studentTableWrap').style.display = 'none';
+            setTimeout(function () {
+                renderTable(studentData);
+                document.getElementById('tblSkeleton').style.display = 'none';
+                document.getElementById('studentTableWrap').style.display = 'block';
+                document.getElementById('tblPagination').style.display = 'flex';
+                tableLoaded = true;
+                showToast('Students Loaded', 'Showing 17 of 50,000 records', 'success');
+            }, 1800);
+        }
+        function renderTable(data) {
+            var tbody = document.getElementById('studentTbody');
+            tbody.innerHTML = '';
+            data.forEach(function (s, i) {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td><input type="checkbox" class="row-check"></td>' +
+                    '<td><strong>' + s.roll + '</strong></td>' +
+                    '<td><div class="tbl-avatar" style="background:' + s.avc + ';">' + s.av + '</div></td>' +
+                    '<td><strong>' + s.name + '</strong></td>' +
+                    '<td>' + s.gender + '</td>' +
+                    '<td>' + s.parent + '</td>' +
+                    '<td><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:50px;font-size:.75rem;font-weight:700;">' + s.cls + '</span></td>' +
+                    '<td>' + s.sec + '</td>' +
+                    '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + s.addr + '">' + s.addr + '</td>' +
+                    '<td>' + s.dob + '</td>' +
+                    '<td>' + s.mob + '</td>' +
+                    '<td style="color:var(--blue);">' + s.email + '</td>' +
+                    '<td><div class="tbl-actions">' +
+                    '<button class="tbl-act-btn tbl-view" title="View" onclick="showToast(\'View Student\',\'Opening ' + s.name + '\\\'s profile\',\'info\')"><i class="fas fa-eye"></i></button>' +
+                    '<button class="tbl-act-btn tbl-edit" title="Edit" onclick="showToast(\'Edit Student\',\'Opening edit form for ' + s.name + '\',\'info\')"><i class="fas fa-pen"></i></button>' +
+                    '<button class="tbl-act-btn tbl-del" title="Delete" onclick="confirmDelete(this,\'' + s.name + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</div></td>';
+                tbody.appendChild(tr);
+            });
+        }
+        function toggleAll(cb) {
+            document.querySelectorAll('.row-check').forEach(function (c) { c.checked = cb.checked; });
+        }
+        function filterTable() {
+            var roll = document.getElementById('rollSearch').value.toLowerCase();
+            var sec = document.getElementById('sectionSearch').value.toLowerCase();
+            var rows = document.querySelectorAll('#studentTbody tr');
+            rows.forEach(function (row) {
+                var cells = row.querySelectorAll('td');
+                var rollVal = cells[1] ? cells[1].textContent.toLowerCase() : '';
+                var secVal = cells[7] ? cells[7].textContent.toLowerCase() : '';
+                var show = (!roll || rollVal.includes(roll)) && (!sec || secVal.includes(sec));
+                row.style.display = show ? '' : 'none';
+            });
+        }
+        function confirmDelete(btn, name) {
+            if (confirm('Delete student: ' + name + '?')) {
+                btn.closest('tr').style.opacity = '0.4';
+                showToast('Deleted', 'Student ' + name + ' has been removed', 'error');
+                setTimeout(function () { btn.closest('tr').remove(); }, 600);
+            }
+        }
+        var sortDir = {};
+        function sortTable(col) {
+            var tbody = document.getElementById('studentTbody');
+            var rows = Array.from(tbody.querySelectorAll('tr'));
+            sortDir[col] = !sortDir[col];
+            rows.sort(function (a, b) {
+                var av = a.querySelectorAll('td')[col].textContent.trim();
+                var bv = b.querySelectorAll('td')[col].textContent.trim();
+                return sortDir[col] ? av.localeCompare(bv) : bv.localeCompare(av);
+            });
+            rows.forEach(function (r) { tbody.appendChild(r); });
+        }
+
+        /* welcome toast on load */
+        setTimeout(function () { showToast('Welcome back!', 'Kazi Fahim – Dashboard loaded successfully', 'success'); }, 2600);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vidyasetu – Sign In</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════ */
+    :root {
+      --navy: #0b1640;
+      --navy2: #1a3a8a;
+      --blue: #1e40af;
+      --blue-l: #3b5fe2;
+      --yellow: #f5a623;
+      --yellow2: #d4880a;
+      --yg: rgba(245, 166, 35, .18);
+      --bg: rgba(245, 166, 35, .08);
+      --orange: #f97316;
+      --green: #10b981;
+      --red: #ef4444;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --input-bg: #f8fafc;
+      --r: 12px;
+      --r2: 8px;
+      --shadow: 0 20px 60px rgba(0, 0, 0, .09);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════
+   ANIMATED WHITE BACKGROUND
+═══════════════════════════════════════ */
+    .bg-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    /* subtle grid */
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(30, 64, 175, .04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 64, 175, .04) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+
+    /* soft colour blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      animation: blobDrift ease-in-out infinite;
+    }
+
+    .b1 {
+      width: 500px;
+      height: 500px;
+      background: rgba(30, 64, 175, .06);
+      top: -150px;
+      left: -100px;
+      animation-duration: 22s;
+    }
+
+    .b2 {
+      width: 420px;
+      height: 420px;
+      background: rgba(245, 166, 35, .07);
+      bottom: -130px;
+      right: -80px;
+      animation-duration: 28s;
+      animation-delay: -9s;
+    }
+
+    .b3 {
+      width: 320px;
+      height: 320px;
+      background: rgba(30, 64, 175, .05);
+      top: 45%;
+      left: 45%;
+      animation-duration: 18s;
+      animation-delay: -5s;
+    }
+
+    @keyframes blobDrift {
+
+      0%,
+      100% {
+        transform: translate(0, 0)scale(1);
+      }
+
+      33% {
+        transform: translate(28px, -38px)scale(1.07);
+      }
+
+      66% {
+        transform: translate(-22px, 26px)scale(.93);
+      }
+    }
+
+    /* floating education SVG icons */
+    .floats {
+      position: absolute;
+      inset: 0;
+    }
+
+    .fi {
+      position: absolute;
+      animation: fiFloat ease-in-out infinite;
+      opacity: .045;
+    }
+
+    @keyframes fiFloat {
+
+      0%,
+      100% {
+        transform: translateY(0)rotate(0deg);
+      }
+
+      40% {
+        transform: translateY(-22px)rotate(8deg);
+      }
+
+      70% {
+        transform: translateY(-10px)rotate(-4deg);
+      }
+    }
+
+    /* ═══════════════════════════════════════
+   PAGE LAYOUT
+═══════════════════════════════════════ */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ═══════════════════════════════════════
+   TWO-COLUMN WRAPPER
+═══════════════════════════════════════ */
+    .wrap {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 56px;
+      align-items: center;
+      animation: wrapIn .65s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes wrapIn {
+      from {
+        opacity: 0;
+        transform: translateY(36px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* ═══════════════════════════════════════
+   LEFT SIDE
+═══════════════════════════════════════ */
+    .left {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 18px rgba(30, 64, 175, .25);
+      flex-shrink: 0;
+    }
+
+    .logo-box svg {
+      width: 26px;
+      height: 26px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .logo-name {
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: 1.65rem;
+      color: var(--navy);
+      letter-spacing: -.02em;
+    }
+
+    .logo-name em {
+      font-style: normal;
+      color: var(--yellow2);
+    }
+
+    .logo-tagline {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .left-headline {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    .left-headline mark {
+      background: linear-gradient(120deg, var(--yg) 0%, var(--bg) 100%);
+      color: var(--yellow2);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .left-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 440px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .feat {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .04);
+    }
+
+    .feat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: .95rem;
+      flex-shrink: 0;
+    }
+
+    .fi-blue {
+      background: #eff6ff;
+      color: var(--blue);
+    }
+
+    .fi-orange {
+      background: #fff7ed;
+      color: var(--orange);
+    }
+
+    .fi-green {
+      background: #f0fdf4;
+      color: var(--green);
+    }
+
+    .fi-purple {
+      background: #faf5ff;
+      color: #7c3aed;
+    }
+
+    .feat-title {
+      font-family: 'Sora', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .feat-sub {
+      font-size: .74rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .left-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .left-links a {
+      font-size: .82rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color .2s;
+    }
+
+    .left-links a:hover {
+      color: var(--orange);
+    }
+
+    /* ═══════════════════════════════════════
+   CARD
+═══════════════════════════════════════ */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-bottom: 4px solid var(--orange);
+      box-shadow: var(--shadow);
+      padding: 36px 36px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* top accent line */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+      opacity: .35;
+    }
+
+    .card-head {
+      margin-bottom: 28px;
+    }
+
+    .card-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .card-sub {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── TAB BAR ── */
+    .tabs {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 50px;
+      padding: 4px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .tab-gl {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      width: calc(50% - 4px);
+      background: linear-gradient(135deg, var(--blue), var(--navy2));
+      border-radius: 50px;
+      transition: transform .32s cubic-bezier(.34, 1.56, .64, 1);
+      box-shadow: 0 2px 10px rgba(30, 64, 175, .28);
+    }
+
+    .tabs[data-t="otp"] .tab-gl {
+      transform: translateX(0);
+    }
+
+    .tabs[data-t="pw"] .tab-gl {
+      transform: translateX(100%);
+    }
+
+    .tbtn {
+      flex: 1;
+      z-index: 1;
+      position: relative;
+      background: none;
+      border: none;
+      padding: 10px 6px;
+      border-radius: 50px;
+      font-family: 'Sora', sans-serif;
+      font-size: .83rem;
+      font-weight: 700;
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: color .28s;
+    }
+
+    .tbtn.on {
+      color: #fff;
+    }
+
+    /* panels */
+    .pnl {
+      display: none;
+      animation: pIn .28s ease both;
+    }
+
+    .pnl.on {
+      display: block;
+    }
+
+    @keyframes pIn {
+      from {
+        opacity: 0;
+        transform: translateX(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* ── STEP INDICATOR ── */
+    .steps {
+      display: flex;
+      align-items: center;
+      margin-bottom: 22px;
+      gap: 0;
+    }
+
+    .sdot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-family: 'Sora', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      border: 2px solid var(--border);
+      color: #94a3b8;
+      background: #fff;
+      transition: all .3s;
+      flex-shrink: 0;
+    }
+
+    .sdot.act {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .sdot.dn {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .sline {
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      margin: 0 4px;
+      transition: background .3s;
+    }
+
+    .sline.dn {
+      background: var(--green);
+    }
+
+    .slbl {
+      font-size: .72rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-left: 5px;
+      transition: color .3s;
+    }
+
+    .slbl.act {
+      color: var(--blue);
+    }
+
+    .slbl.dn {
+      color: var(--green);
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .fg {
+      margin-bottom: 18px;
+    }
+
+    .lbl {
+      display: block;
+      font-family: 'Sora', sans-serif;
+      font-size: .77rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lbl i {
+      color: var(--blue);
+      font-size: .8rem;
+    }
+
+    .iw {
+      position: relative;
+    }
+
+    .inp {
+      width: 100%;
+      padding: 12px 42px 12px 14px;
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--r2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      color: var(--text);
+      outline: none;
+      transition: all .25s;
+    }
+
+    .inp::placeholder {
+      color: #94a3b8;
+    }
+
+    .inp:focus {
+      background: #fff;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(30, 64, 175, .09);
+    }
+
+    .inp.valid {
+      border-color: var(--green);
+      background: #f0fdf4;
+    }
+
+    .inp.invalid {
+      border-color: var(--red);
+      background: #fef2f2;
+    }
+
+    .inp-icon {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: .88rem;
+      color: #94a3b8;
+      pointer-events: none;
+      transition: color .2s;
+    }
+
+    .inp:focus~.inp-icon {
+      color: var(--blue);
+    }
+
+    .inp.valid~.inp-icon {
+      color: var(--green);
+    }
+
+    /* eye btn */
+    .eye {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: .88rem;
+      cursor: pointer;
+      transition: color .2s;
+    }
+
+    .eye:hover {
+      color: var(--text);
+    }
+
+    .inp.pw {
+      padding-right: 40px;
+    }
+
+    /* err */
+    .et {
+      display: none;
+      font-size: .76rem;
+      color: var(--red);
+      margin-top: 5px;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .et.on {
+      display: flex;
+    }
+
+    /* ── CAPTCHA ── */
+    .cap-row {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 12px;
+    }
+
+    .cap-box {
+      flex: 1;
+      height: 48px;
+      border-radius: var(--r2);
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: 8px;
+      color: #fff;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cap-box::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 255, 255, .06) 3px, rgba(255, 255, 255, .06) 4px);
+      pointer-events: none;
+    }
+
+    .cap-noise {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(80deg, transparent 0, transparent 3px, rgba(255, 255, 255, .04) 3px, rgba(255, 255, 255, .04) 6px);
+      pointer-events: none;
+    }
+
+    .cap-refresh {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--r2);
+      background: #f1f5f9;
+      border: 2px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: .9rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+
+    .cap-refresh:hover {
+      background: #e2e8f0;
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    /* ── REVEAL ANIMATION ── */
+    .reveal {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .55s cubic-bezier(.4, 0, .2, 1), opacity .4s ease, margin .4s;
+    }
+
+    .reveal.show {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 18px;
+    }
+
+    /* ── OTP BOXES ── */
+    .orow {
+      display: flex;
+      gap: 9px;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .ob {
+      flex: 1;
+      height: 54px;
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--r2);
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-family: 'Sora', sans-serif;
+      color: var(--navy);
+      outline: none;
+      transition: all .22s;
+      caret-color: var(--blue);
+    }
+
+    .ob:focus {
+      background: #fff;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
+    }
+
+    .ob.ok {
+      border-color: var(--blue);
+      background: #eff6ff;
+    }
+
+    .ob.er {
+      border-color: var(--red);
+      background: #fef2f2;
+      animation: shk .35s ease;
+    }
+
+    @keyframes shk {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      75% {
+        transform: translateX(5px);
+      }
+    }
+
+    /* timer/resend */
+    .ometa {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .78rem;
+      margin-bottom: 16px;
+    }
+
+    .otimer {
+      color: var(--muted);
+    }
+
+    .otimer strong {
+      color: var(--blue);
+    }
+
+    .rsnd {
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem;
+      color: #94a3b8;
+      cursor: not-allowed;
+      transition: color .2s;
+    }
+
+    .rsnd.rdy {
+      color: var(--blue-l);
+      cursor: pointer;
+    }
+
+    .rsnd.rdy:hover {
+      color: var(--navy);
+    }
+
+    /* otp hint */
+    .otp-hint {
+      background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+      border: 1px solid rgba(30, 64, 175, .15);
+      border-radius: var(--r2);
+      padding: 10px 14px;
+      font-size: .78rem;
+      color: var(--blue);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* mobile sent note */
+    .sent-note {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .sent-note strong {
+      color: var(--navy);
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: var(--r2);
+      font-family: 'Sora', sans-serif;
+      font-size: .92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      transition: all .25s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--navy2) 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(30, 64, 175, .28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .18), transparent);
+      transition: left .5s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(30, 64, 175, .35);
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:active {
+      transform: none;
+    }
+
+    .btn-primary:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    .spin {
+      display: none;
+      width: 17px;
+      height: 17px;
+      border: 2.5px solid rgba(255, 255, 255, .3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: sp .65s linear infinite;
+    }
+
+    @keyframes sp {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .btn.ld .blbl {
+      display: none;
+    }
+
+    .btn.ld .spin {
+      display: block;
+    }
+
+    /* ── SUCCESS ── */
+    .suc {
+      display: none;
+      text-align: center;
+      animation: pIn .4s ease both;
+    }
+
+    .suc.on {
+      display: block;
+    }
+
+    .tick-ring {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      border: 2px solid rgba(16, 185, 129, .35);
+      display: grid;
+      place-items: center;
+      animation: popR .5s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+    @keyframes popR {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .tick-ring i {
+      font-size: 1.9rem;
+      color: var(--green);
+    }
+
+    .suc-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .suc-sub {
+      font-size: .86rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .u-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      background: linear-gradient(135deg, #eff6ff, #f8faff);
+      border: 1px solid rgba(30, 64, 175, .15);
+      border-bottom: 3px solid var(--orange);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .u-av {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      display: grid;
+      place-items: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .u-name {
+      font-family: 'Sora', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .u-info {
+      font-size: .74rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .u-sch {
+      font-size: .74rem;
+      color: var(--yellow2);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .btn-dash {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: var(--r2);
+      background: linear-gradient(135deg, var(--yellow), var(--yellow2));
+      color: var(--navy);
+      font-family: 'Sora', sans-serif;
+      font-size: .92rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      box-shadow: 0 4px 16px rgba(245, 166, 35, .3);
+      transition: all .25s;
+    }
+
+    .btn-dash:hover {
+      transform: translateY(-2px);
+    }
+
+    .redir {
+      font-size: .74rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .redir strong {
+      color: var(--blue);
+    }
+
+    /* card footer */
+    .card-foot {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cf-link {
+      font-size: .78rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color .2s;
+    }
+
+    .cf-link:hover {
+      color: var(--orange);
+    }
+
+    /* ── NOTIFICATION ── */
+    .notif {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      background: #fff;
+      border-left: 4px solid var(--orange);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, .13);
+      padding: 14px 18px;
+      display: none;
+      align-items: flex-start;
+      gap: 12px;
+      max-width: 320px;
+      animation: nIn .4s cubic-bezier(.34, 1.56, .64, 1);
+      border-radius: 4px;
+    }
+
+    .notif.on {
+      display: flex;
+    }
+
+    @keyframes nIn {
+      from {
+        transform: translateX(340px);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    .ntxt h4 {
+      font-family: 'Sora', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .ntxt p {
+      font-size: .76rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:860px) {
+      .wrap {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .left {
+        display: none;
+      }
+    }
+
+    @media(max-width:480px) {
+      .card {
+        padding: 28px 20px 22px;
+      }
+
+      .ob {
+        height: 48px;
+        font-size: 1.2rem;
+      }
+
+      .orow {
+        gap: 7px;
+      }
+    }
+
+    @media(max-width:360px) {
+      .ob {
+        height: 42px;
+        font-size: 1rem;
+      }
+
+      .orow {
+        gap: 5px;
+      }
+    }
+
+    /* page footer */
+    .pg-footer {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(12px);
+      border-top: 3px solid var(--blue);
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    .pg-footer strong {
+      color: var(--navy);
+    }
+
+    .pg-footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .pg-footer a:hover {
+      color: var(--orange);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ ANIMATED BACKGROUND ══ -->
+  <div class="bg-wrap">
+    <div class="bg-grid"></div>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <!-- Floating education SVG icons injected by JS -->
+    <div class="floats" id="floats"></div>
+  </div>
+
+  <!-- ══ PAGE ══ -->
+  <div style="display:flex;flex-direction:column;min-height:100vh;position:relative;z-index:1;">
+    <div class="page" style="flex:1;">
+      <div class="wrap">
+
+        <!-- ══ LEFT ══ -->
+        <div class="left">
+          <div class="logo-row">
+            <div class="logo-box">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <div>
+              <div class="logo-name">Vidya<em>setu</em></div>
+              <div class="logo-tagline">School Management Portal</div>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="left-headline">Welcome to Your<br><mark>Secure Portal</mark></h2>
+            <p class="left-sub" style="margin-top:14px;">Access your school management dashboard with enterprise-grade
+              security and a seamless experience — from admissions to results.</p>
+          </div>
+
+          <div class="feature-grid">
+            <div class="feat">
+              <div class="feat-icon fi-blue"><i class="fas fa-shield-halved"></i></div>
+              <div>
+                <div class="feat-title">Secure Access</div>
+                <div class="feat-sub">256-bit SSL encryption</div>
+              </div>
+            </div>
+            <div class="feat">
+              <div class="feat-icon fi-orange"><i class="fas fa-lock"></i></div>
+              <div>
+                <div class="feat-title">Data Privacy</div>
+                <div class="feat-sub">Your data is protected</div>
+              </div>
+            </div>
+            <div class="feat">
+              <div class="feat-icon fi-green"><i class="fas fa-check-circle"></i></div>
+              <div>
+                <div class="feat-title">Verified Platform</div>
+                <div class="feat-sub">Government certified</div>
+              </div>
+            </div>
+            <div class="feat">
+              <div class="feat-icon fi-purple"><i class="fas fa-clock"></i></div>
+              <div>
+                <div class="feat-title">24/7 Available</div>
+                <div class="feat-sub">Access anytime</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="left-links">
+            <a href="#"><i class="fas fa-user-shield"></i> Privacy Policy</a>
+            <a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a>
+          </div>
+        </div>
+
+        <!-- ══ CARD ══ -->
+        <div class="card">
+
+          <!-- SUCCESS -->
+          <div class="suc" id="sucScreen">
+            <div class="tick-ring"><i class="fas fa-check"></i></div>
+            <h2 class="suc-title">Login Successful!</h2>
+            <p class="suc-sub">Welcome back! Your dashboard is ready and waiting.</p>
+            <div class="u-pill">
+              <div class="u-av" id="uAv">RS</div>
+              <div>
+                <div class="u-name">Rajesh Singh</div>
+                <div class="u-info"><i class="fas fa-envelope" style="font-size:.68rem"></i> &nbsp;<span
+                    id="uEmail"></span></div>
+                <div class="u-sch"><i class="fas fa-school" style="font-size:.68rem"></i> &nbsp;DAV Public School, Patna
+                </div>
+              </div>
+            </div>
+            <button class="btn-dash" onclick="goDash()"><i class="fas fa-tachometer-alt"></i> Go to Dashboard</button>
+            <p class="redir">Auto-redirecting in <strong id="cdwn">5</strong>s...</p>
+          </div>
+
+          <!-- MAIN FORM -->
+          <div id="mainForm">
+            <div class="card-head">
+              <div class="card-title">Sign In</div>
+              <div class="card-sub">Enter your credentials to access the portal</div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs" data-t="pw" id="tabBar">
+              <div class="tab-gl"></div>
+              <button class="tbtn" id="t1" onclick="swTab('pw')">
+                <i class="fas fa-lock"></i> Email & Password
+              </button>
+              <button class="tbtn on" id="t2" onclick="swTab('otp')">
+                <i class="fas fa-mobile-alt"></i> Login with OTP
+              </button>
+            </div>
+
+            <!-- ══════════ PASSWORD PANEL ══════════ -->
+            <div class="pnl" id="pwPanel">
+
+              <!-- Step indicator -->
+              <div class="steps" id="pwSteps">
+                <div class="sdot act" id="pd1">1</div>
+                <div class="slbl act" id="pl1">Email</div>
+                <div class="sline" id="pline1"></div>
+                <div class="sdot" id="pd2">2</div>
+                <div class="slbl" id="pl2">Password</div>
+                <div class="sline" id="pline2"></div>
+                <div class="sdot" id="pd3">3</div>
+                <div class="slbl" id="pl3">Verify</div>
+              </div>
+
+              <!-- Step 1: Email -->
+              <div id="pwS1">
+                <div class="fg">
+                  <label class="lbl"><i class="fas fa-envelope"></i> Email Address</label>
+                  <div class="iw">
+                    <input class="inp" id="pwEmail" type="email" placeholder="yourname@school.edu" autocomplete="email"
+                      oninput="onEmailType()">
+                    <span class="inp-icon" id="emailIcn"><i class="fas fa-envelope"></i></span>
+                  </div>
+                  <div class="et" id="emailEt"><i class="fas fa-exclamation-circle"></i> Enter a valid email address
+                  </div>
+                </div>
+                <button class="btn btn-primary" id="contBtn" onclick="stepContinue()">
+                  <span class="blbl">Continue &nbsp;<i class="fas fa-arrow-right"></i></span>
+                  <div class="spin"></div>
+                </button>
+              </div>
+
+              <!-- Step 2: Password + Captcha (revealed) -->
+              <div class="reveal" id="pwS2">
+                <div class="fg">
+                  <label class="lbl"><i class="fas fa-lock"></i> Password</label>
+                  <div class="iw">
+                    <input class="inp pw" id="pwIn" type="password" placeholder="Enter your password"
+                      autocomplete="current-password" oninput="onPwType()">
+                    <button class="eye" onclick="togEye()"><i class="fas fa-eye" id="eyeIc"></i></button>
+                  </div>
+                  <div class="et" id="pwEt"><i class="fas fa-exclamation-circle"></i> Password must be at least 6
+                    characters</div>
+                </div>
+
+                <!-- Captcha -->
+                <div class="fg">
+                  <label class="lbl"><i class="fas fa-shield-halved"></i> Security Verification</label>
+                  <div class="cap-row">
+                    <div class="cap-box">
+                      <div class="cap-noise"></div>
+                      <span id="capCode" style="position:relative;z-index:1;letter-spacing:6px;"></span>
+                    </div>
+                    <button class="cap-refresh" onclick="genCap(true)" title="Refresh captcha"><i
+                        class="fas fa-rotate-right" id="capRefreshIc"></i></button>
+                  </div>
+                  <div class="iw">
+                    <input class="inp" id="capIn" type="text" placeholder="Enter code above" maxlength="6"
+                      autocomplete="off" oninput="onCapType()">
+                    <span class="inp-icon" id="capIcn"><i class="fas fa-shield-halved"></i></span>
+                  </div>
+                  <div class="et" id="capEt"><i class="fas fa-exclamation-circle"></i> Captcha code does not match</div>
+                </div>
+
+                <div class="reveal show" id="pwS3">
+                  <button class="btn btn-primary" id="signInBtn" onclick="handleSignIn()">
+                    <span class="blbl"><i class="fas fa-sign-in-alt"></i> Sign In to Portal</span>
+                    <div class="spin"></div>
+                  </button>
+                </div>
+
+                <div style="margin-top:12px;">
+                  <button class="btn btn-ghost" onclick="stepBack()"><i class="fas fa-arrow-left"></i> Use a different
+                    email</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ══════════ OTP PANEL ══════════ -->
+            <div class="pnl on" id="otpPanel">
+
+              <!-- Step indicator -->
+              <div class="steps">
+                <div class="sdot act" id="od1">1</div>
+                <div class="slbl act" id="ol1">Mobile</div>
+                <div class="sline" id="oline1"></div>
+                <div class="sdot" id="od2">2</div>
+                <div class="slbl" id="ol2">OTP</div>
+                <div class="sline" id="oline2"></div>
+                <div class="sdot" id="od3">3</div>
+                <div class="slbl" id="ol3">Done</div>
+              </div>
+
+              <!-- Mobile input -->
+              <div class="fg" id="mobGrp">
+                <label class="lbl"><i class="fas fa-mobile-alt"></i> Mobile Number</label>
+                <div class="iw" style="display:flex;gap:0;">
+                  <span
+                    style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:.82rem;font-weight:600;color:#94a3b8;border-right:1px solid var(--border);padding-right:8px;pointer-events:none;z-index:1;">+91</span>
+                  <input class="inp" id="mobIn" type="tel" maxlength="10" placeholder="10-digit mobile number"
+                    style="padding-left:52px;padding-right:96px;"
+                    oninput="this.value=this.value.replace(/\D/g,'');onMobType()">
+                  <button
+                    style="position:absolute;right:9px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,var(--blue),var(--navy2));color:#fff;border:none;border-radius:6px;padding:7px 12px;font-family:'Sora',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:opacity .2s;box-shadow:0 2px 8px rgba(30,64,175,.25);"
+                    id="getOtpBtn" onclick="doSendOTP()" disabled>
+                    <span id="getOtpLbl">Get OTP</span>
+                  </button>
+                </div>
+                <div class="et" id="mobEt"><i class="fas fa-exclamation-circle"></i> Enter a valid 10-digit number</div>
+              </div>
+
+              <!-- OTP input step -->
+              <div class="reveal" id="otpStep">
+                <p class="sent-note">OTP sent to <strong id="sentTo"></strong> &nbsp;<span
+                    style="font-size:.72rem;color:#94a3b8;cursor:pointer;" onclick="chgNum()">(Change)</span></p>
+                <div class="otp-hint"><i class="fas fa-info-circle"></i> Demo OTP: &nbsp;<strong>1 2 3 4 5 6</strong>
+                </div>
+
+                <div class="fg">
+                  <label class="lbl"><i class="fas fa-key"></i> Enter 6-digit OTP</label>
+                  <div class="orow">
+                    <input class="ob" id="o1" type="text" inputmode="numeric" maxlength="1" oninput="oi(this,1)"
+                      onkeydown="ok(event,1)">
+                    <input class="ob" id="o2" type="text" inputmode="numeric" maxlength="1" oninput="oi(this,2)"
+                      onkeydown="ok(event,2)">
+                    <input class="ob" id="o3" type="text" inputmode="numeric" maxlength="1" oninput="oi(this,3)"
+                      onkeydown="ok(event,3)">
+                    <input class="ob" id="o4" type="text" inputmode="numeric" maxlength="1" oninput="oi(this,4)"
+                      onkeydown="ok(event,4)">
+                    <input class="ob" id="o5" type="text" inputmode="numeric" maxlength="1" oninput="oi(this,5)"
+                      onkeydown="ok(event,5)">
+                    <input class="ob" id="o6" type="text" inputmode="numeric" maxlength="1" oninput="oi(this,6)"
+                      onkeydown="ok(event,6)">
+                  </div>
+                  <div class="et" id="otpEt"><i class="fas fa-exclamation-circle"></i> Incorrect OTP. Please try again.
+                  </div>
+                </div>
+
+                <div class="ometa">
+                  <span class="otimer" id="timerEl"></span>
+                  <button class="rsnd" id="rsndBtn" onclick="doResend()">Resend OTP</button>
+                </div>
+
+                <button class="btn btn-primary" id="otpVerifyBtn" onclick="handleOTPVerify()" disabled>
+                  <span class="blbl"><i class="fas fa-check-circle"></i> Verify & Login</span>
+                  <div class="spin"></div>
+                </button>
+              </div>
+
+              <!-- initial continue btn for otp -->
+              <button class="btn btn-primary" id="otpContBtn" onclick="otpContinue()" style="margin-top:4px;">
+                <span class="blbl">Continue &nbsp;<i class="fas fa-arrow-right"></i></span>
+                <div class="spin"></div>
+              </button>
+
+            </div>
+
+          </div><!-- /mainForm -->
+
+          <!-- Card Footer -->
+          <div class="card-foot" id="cardFoot">
+            <a href="#" class="cf-link"><i class="fas fa-question-circle"></i> Need Help?</a>
+            <a href="#" class="cf-link"><i class="fas fa-key"></i> Forgot Password?</a>
+          </div>
+
+        </div><!-- /card -->
+
+      </div><!-- /wrap -->
+    </div><!-- /page -->
+
+    <!-- PAGE FOOTER -->
+    <footer class="pg-footer">
+      <div>© 2024 <strong>Vidyasetu</strong> School Management System. All rights reserved.</div>
+      <div style="display:flex;gap:16px;">
+        <a href="#"><i class="fas fa-user-shield" style="margin-right:4px;"></i>Privacy</a>
+        <a href="#"><i class="fas fa-file-contract" style="margin-right:4px;"></i>Terms</a>
+        <a href="#" style="color:var(--orange);font-weight:600;">Technology: Computer Ed.</a>
+      </div>
+    </footer>
+  </div><!-- /flex wrapper -->
+
+  <!-- NOTIFICATION -->
+  <div class="notif" id="notif">
+    <div id="nIcon"></div>
+    <div class="ntxt">
+      <h4 id="nTitle"></h4>
+      <p id="nMsg"></p>
+    </div>
+  </div>
+
+  <script>
+    /* ── FLOATING SVG EDUCATION ICONS ── */
+    (function () {
+      var icons = [
+        // Book
+        '<svg viewBox="0 0 40 40"><rect x="8" y="5" width="20" height="30" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="28" y2="12" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="17" x2="24" y2="17" stroke="currentColor" stroke-width="1.2"/><line x1="12" y1="21" x2="24" y2="21" stroke="currentColor" stroke-width="1.2"/><line x1="12" y1="25" x2="20" y2="25" stroke="currentColor" stroke-width="1.2"/></svg>',
+        // Graduation cap
+        '<svg viewBox="0 0 40 40"><polygon points="20,8 36,16 20,24 4,16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 18v8c0 3 4.5 6 10 6s10-3 10-6v-8" fill="none" stroke="currentColor" stroke-width="2"/><line x1="36" y1="16" x2="36" y2="26" stroke="currentColor" stroke-width="2"/></svg>',
+        // Pencil
+        '<svg viewBox="0 0 40 40"><path d="M28 6l6 6L14 32l-8 2 2-8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="24" y1="10" x2="30" y2="16" stroke="currentColor" stroke-width="1.5"/></svg>',
+        // Flask
+        '<svg viewBox="0 0 40 40"><path d="M16 8v12L8 30a2 2 0 001.7 3h18.6A2 2 0 0030 30L22 20V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="14" y1="8" x2="26" y2="8" stroke="currentColor" stroke-width="2"/><circle cx="14" cy="27" r="1.5" fill="currentColor"/><circle cx="22" cy="24" r="1" fill="currentColor"/></svg>',
+        // Calculator
+        '<svg viewBox="0 0 40 40"><rect x="8" y="5" width="24" height="30" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="9" width="16" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="22" r="1.5" fill="currentColor"/><circle cx="20" cy="22" r="1.5" fill="currentColor"/><circle cx="26" cy="22" r="1.5" fill="currentColor"/><circle cx="14" cy="28" r="1.5" fill="currentColor"/><circle cx="20" cy="28" r="1.5" fill="currentColor"/><circle cx="26" cy="28" r="1.5" fill="currentColor"/></svg>',
+        // Globe
+        '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="20" cy="20" rx="7" ry="14" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="20" x2="34" y2="20" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="13" x2="32" y2="13" stroke="currentColor" stroke-width="1"/><line x1="8" y1="27" x2="32" y2="27" stroke="currentColor" stroke-width="1"/></svg>',
+        // Trophy
+        '<svg viewBox="0 0 40 40"><path d="M14 6h12v12a6 6 0 01-12 0V6z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 10H8a4 4 0 004 4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M26 10h6a4 4 0 01-4 4" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="20" y1="24" x2="20" y2="30" stroke="currentColor" stroke-width="2"/><line x1="14" y1="30" x2="26" y2="30" stroke="currentColor" stroke-width="2"/></svg>',
+        // Atom
+        '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="3" fill="currentColor"/><ellipse cx="20" cy="20" rx="14" ry="6" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="20" cy="20" rx="14" ry="6" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(60 20 20)"/><ellipse cx="20" cy="20" rx="14" ry="6" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(120 20 20)"/></svg>',
+        // Bus
+        '<svg viewBox="0 0 40 40"><rect x="5" y="10" width="30" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="5" y1="18" x2="35" y2="18" stroke="currentColor" stroke-width="1.5"/><line x1="20" y1="10" x2="20" y2="30" stroke="currentColor" stroke-width="1"/><circle cx="12" cy="33" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="28" cy="33" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="21" width="6" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1"/><rect x="25" y="21" width="6" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1"/></svg>',
+        // Music note
+        '<svg viewBox="0 0 40 40"><path d="M18 28V12l14-4v16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="14" cy="28" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="28" cy="24" r="4" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+        // Star
+        '<svg viewBox="0 0 40 40"><polygon points="20,5 24,15 35,15 26,22 29,33 20,26 11,33 14,22 5,15 16,15" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+        // Compass
+        '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2"/><polygon points="20,10 23,20 20,22 17,20" fill="currentColor" opacity=".5"/><polygon points="20,30 17,20 20,18 23,20" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
+      ];
+      var cols = ['#1e40af', '#f5a623', '#1e40af', '#f97316', '#1e40af', '#f5a623'];
+      var wrap = document.getElementById('floats');
+      var positions = [
+        { l: '3%', t: '8%' }, { l: '88%', t: '5%' }, { l: '6%', t: '55%' }, { l: '92%', t: '50%' },
+        { l: '15%', t: '85%' }, { l: '80%', t: '80%' }, { l: '45%', t: '4%' }, { l: '50%', t: '90%' },
+        { l: '30%', t: '15%' }, { l: '70%', t: '20%' }, { l: '25%', t: '70%' }, { l: '75%', t: '65%' }
+      ];
+      icons.forEach(function (svg, i) {
+        var pos = positions[i % positions.length];
+        var col = cols[i % cols.length];
+        var sz = 52 + Math.random() * 36;
+        var dur = 9 + Math.random() * 9;
+        var del = Math.random() * 7;
+        var el = document.createElement('div');
+        el.className = 'fi';
+        el.style.cssText = 'left:' + pos.l + ';top:' + pos.t + ';width:' + sz + 'px;height:' + sz + 'px;color:' + col + ';animation-duration:' + dur + 's;animation-delay:' + del + 's;';
+        el.innerHTML = svg;
+        wrap.appendChild(el);
+      });
+    })();
+
+    /* ── STATE ── */
+    var curTab = 'otp', otpSent = false, tmrInt = null, tmrSec = 30, capCode = '';
+    var pwStep = 1;
+
+    /* init */
+    genCap(false);
+    swTab('otp');
+
+    /* ── TAB SWITCH ── */
+    function swTab(t) {
+      curTab = t;
+      document.getElementById('tabBar').dataset.t = t;
+      document.getElementById('t1').classList.toggle('on', t === 'pw');
+      document.getElementById('t2').classList.toggle('on', t === 'otp');
+      document.getElementById('pwPanel').classList.toggle('on', t === 'pw');
+      document.getElementById('otpPanel').classList.toggle('on', t === 'otp');
+    }
+
+    /* ══════════════════════
+       PASSWORD FLOW
+    ══════════════════════ */
+    function onEmailType() {
+      var v = document.getElementById('pwEmail').value;
+      var icn = document.getElementById('emailIcn').querySelector('i');
+      var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+      document.getElementById('pwEmail').classList.toggle('valid', valid && v !== '');
+      document.getElementById('pwEmail').classList.toggle('invalid', !valid && v !== '');
+      if (valid) { icn.className = 'fas fa-check-circle'; document.getElementById('emailIcn').style.color = 'var(--green)'; }
+      else { icn.className = 'fas fa-envelope'; document.getElementById('emailIcn').style.color = ''; }
+      document.getElementById('emailEt').classList.remove('on');
+    }
+
+    function stepContinue() {
+      var email = document.getElementById('pwEmail').value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('pwEmail').classList.add('invalid');
+        document.getElementById('emailEt').classList.add('on');
+        return;
+      }
+      var btn = document.getElementById('contBtn');
+      btn.classList.add('ld'); btn.disabled = true;
+      setTimeout(function () {
+        btn.classList.remove('ld'); btn.disabled = false;
+        btn.style.display = 'none';
+        document.getElementById('pwS2').classList.add('show');
+        pwStep = 2;
+        setPwStep(2);
+        setTimeout(function () { document.getElementById('pwIn').focus(); }, 400);
+        notify('Email Verified', 'Please enter your password to continue', 'success');
+      }, 1000);
+    }
+
+    function stepBack() {
+      document.getElementById('pwS2').classList.remove('show');
+      document.getElementById('contBtn').style.display = 'flex';
+      pwStep = 1; setPwStep(1);
+      document.getElementById('pwIn').value = '';
+      document.getElementById('capIn').value = '';
+      document.getElementById('pwIn').classList.remove('valid', 'invalid');
+      document.getElementById('capIn').classList.remove('valid', 'invalid');
+      genCap(false);
+      setTimeout(function () { document.getElementById('pwEmail').focus(); }, 300);
+    }
+
+    function setPwStep(s) {
+      var dots = ['pd1', 'pd2', 'pd3'], lbls = ['pl1', 'pl2', 'pl3'], lines = ['pline1', 'pline2'];
+      dots.forEach(function (id, i) {
+        var d = document.getElementById(id), l = document.getElementById(lbls[i]);
+        d.classList.remove('act', 'dn'); l.classList.remove('act', 'dn');
+        if (i + 1 < s) { d.classList.add('dn'); d.innerHTML = '<i class="fas fa-check" style="font-size:.65rem"></i>'; l.classList.add('dn'); }
+        else if (i + 1 === s) { d.classList.add('act'); d.textContent = i + 1; l.classList.add('act'); }
+        else { d.textContent = i + 1; }
+      });
+      lines.forEach(function (id, i) {
+        document.getElementById(id).classList.toggle('dn', i + 1 < s);
+      });
+    }
+
+    function onPwType() {
+      var v = document.getElementById('pwIn').value;
+      if (v.length >= 6) { document.getElementById('pwEt').classList.remove('on'); }
+      if (v.length >= 6) { setPwStep(3); }
+    }
+
+    /* CAPTCHA */
+    function genCap(notify_user) {
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      capCode = '';
+      for (var i = 0; i < 6; i++)capCode += chars[Math.floor(Math.random() * chars.length)];
+      document.getElementById('capCode').textContent = capCode;
+      document.getElementById('capIn').value = '';
+      document.getElementById('capIn').classList.remove('valid', 'invalid');
+      document.getElementById('capEt').classList.remove('on');
+      if (notify_user) notify('Captcha Refreshed', 'Please re-enter the new code', 'info');
+      var ic = document.getElementById('capRefreshIc');
+      ic.style.transition = 'transform .4s'; ic.style.transform = 'rotate(360deg)';
+      setTimeout(function () { ic.style.transition = ''; ic.style.transform = ''; }, 450);
+    }
+
+    function onCapType() {
+      var v = document.getElementById('capIn');
+      v.value = v.value.toUpperCase();
+      if (v.value === capCode) { v.classList.add('valid'); v.classList.remove('invalid'); document.getElementById('capEt').classList.remove('on'); }
+      else if (v.value.length === 6) { v.classList.add('invalid'); v.classList.remove('valid'); document.getElementById('capEt').classList.add('on'); }
+      else { v.classList.remove('valid', 'invalid'); document.getElementById('capEt').classList.remove('on'); }
+    }
+
+    function handleSignIn() {
+      var email = document.getElementById('pwEmail').value.trim();
+      var pw = document.getElementById('pwIn').value;
+      var cap = document.getElementById('capIn').value;
+      var ok = true;
+      if (pw.length < 6) { document.getElementById('pwEt').classList.add('on'); ok = false; }
+      if (cap !== capCode) { document.getElementById('capEt').classList.add('on'); document.getElementById('capIn').classList.add('invalid'); ok = false; }
+      if (!ok) { notify('Validation Error', 'Please fix the errors and try again', 'error'); return; }
+      var btn = document.getElementById('signInBtn');
+      btn.classList.add('ld'); btn.disabled = true;
+      setTimeout(function () {
+        btn.classList.remove('ld'); btn.disabled = false;
+        showSuccess(email);
+      }, 1400);
+    }
+
+    function togEye() {
+      var i = document.getElementById('pwIn'), ic = document.getElementById('eyeIc');
+      i.type = i.type === 'password' ? 'text' : 'password';
+      ic.className = i.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+    }
+
+    /* ══════════════════════
+       OTP FLOW
+    ══════════════════════ */
+    function onMobType() {
+      var v = document.getElementById('mobIn').value;
+      document.getElementById('getOtpBtn').disabled = v.length !== 10;
+      document.getElementById('mobEt').classList.remove('on');
+    }
+
+    function otpContinue() {
+      var mob = document.getElementById('mobIn').value;
+      if (mob.length !== 10) { document.getElementById('mobEt').classList.add('on'); return; }
+      doSendOTP();
+    }
+
+    function doSendOTP() {
+      var mob = document.getElementById('mobIn').value;
+      if (mob.length !== 10) { document.getElementById('mobEt').classList.add('on'); return; }
+      var btn = document.getElementById('getOtpBtn');
+      btn.disabled = true; document.getElementById('getOtpLbl').textContent = 'Sending…';
+      var cBtn = document.getElementById('otpContBtn'); cBtn.classList.add('ld'); cBtn.disabled = true;
+      setTimeout(function () {
+        document.getElementById('getOtpLbl').textContent = 'Resend'; btn.disabled = false;
+        otpSent = true;
+        document.getElementById('sentTo').textContent = '+91 ' + mob.replace(/(\d{5})(\d{5})/, '$1 $2');
+        document.getElementById('otpStep').classList.add('show');
+        document.getElementById('otpContBtn').style.display = 'none';
+        document.getElementById('mobIn').readOnly = true;
+        setOtpStep(2);
+        startTmr();
+        setTimeout(function () { document.getElementById('o1').focus(); }, 120);
+        cBtn.classList.remove('ld');
+        notify('OTP Sent', '6-digit OTP sent to your mobile number', 'success');
+      }, 1100);
+    }
+
+    function setOtpStep(s) {
+      var dots = ['od1', 'od2', 'od3'], lbls = ['ol1', 'ol2', 'ol3'], lines = ['oline1', 'oline2'];
+      dots.forEach(function (id, i) {
+        var d = document.getElementById(id), l = document.getElementById(lbls[i]);
+        d.classList.remove('act', 'dn'); l.classList.remove('act', 'dn');
+        if (i + 1 < s) { d.classList.add('dn'); d.innerHTML = '<i class="fas fa-check" style="font-size:.65rem"></i>'; l.classList.add('dn'); }
+        else if (i + 1 === s) { d.classList.add('act'); d.textContent = i + 1; l.classList.add('act'); }
+        else { d.textContent = i + 1; }
+      });
+      lines.forEach(function (id, i) { document.getElementById(id).classList.toggle('dn', i + 1 < s); });
+    }
+
+    /* OTP boxes */
+    function oi(el, i) {
+      el.value = el.value.replace(/\D/g, '');
+      if (el.value) { el.classList.add('ok'); if (i < 6) document.getElementById('o' + (i + 1)).focus(); }
+      else el.classList.remove('ok');
+      var all = [1, 2, 3, 4, 5, 6].every(function (n) { return document.getElementById('o' + n).value !== ''; });
+      document.getElementById('otpVerifyBtn').disabled = !all;
+    }
+    function ok(e, i) { if (e.key === 'Backspace' && !document.getElementById('o' + i).value && i > 1) document.getElementById('o' + (i - 1)).focus(); }
+
+    function handleOTPVerify() {
+      var code = [1, 2, 3, 4, 5, 6].map(function (i) { return document.getElementById('o' + i).value; }).join('');
+      var btn = document.getElementById('otpVerifyBtn');
+      btn.classList.add('ld'); btn.disabled = true;
+      setTimeout(function () {
+        btn.classList.remove('ld');
+        if (code === '123456') {
+          clearInterval(tmrInt);
+          showSuccess('+91 ' + document.getElementById('mobIn').value.replace(/(\d{5})(\d{5})/, '$1 $2'));
+        } else {
+          for (var i = 1; i <= 6; i++)document.getElementById('o' + i).classList.add('er');
+          document.getElementById('otpEt').classList.add('on');
+          btn.disabled = false;
+          setTimeout(function () {
+            for (var i = 1; i <= 6; i++) { var b = document.getElementById('o' + i); b.classList.remove('er', 'ok'); b.value = ''; }
+            document.getElementById('otpEt').classList.remove('on');
+            btn.disabled = true;
+            document.getElementById('o1').focus();
+          }, 1500);
+        }
+      }, 1200);
+    }
+
+    function chgNum() {
+      clearInterval(tmrInt);
+      document.getElementById('mobIn').readOnly = false;
+      document.getElementById('otpStep').classList.remove('show');
+      document.getElementById('otpContBtn').style.display = 'flex';
+      document.getElementById('otpContBtn').classList.remove('ld'); document.getElementById('otpContBtn').disabled = false;
+      setOtpStep(1); otpSent = false;
+      for (var i = 1; i <= 6; i++) { var b = document.getElementById('o' + i); b.value = ''; b.classList.remove('ok', 'er'); }
+      document.getElementById('otpVerifyBtn').disabled = true;
+      document.getElementById('otpEt').classList.remove('on');
+      document.getElementById('getOtpLbl').textContent = 'Get OTP';
+    }
+
+    /* timer */
+    function startTmr() {
+      tmrSec = 30; var rb = document.getElementById('rsndBtn'); rb.classList.remove('rdy');
+      updTmr(); clearInterval(tmrInt);
+      tmrInt = setInterval(function () {
+        tmrSec--; updTmr();
+        if (tmrSec <= 0) { clearInterval(tmrInt); document.getElementById('timerEl').textContent = ''; rb.classList.add('rdy'); }
+      }, 1000);
+    }
+    function updTmr() { document.getElementById('timerEl').innerHTML = 'Resend in <strong>0:' + String(tmrSec).padStart(2, '0') + '</strong>'; }
+    function doResend() {
+      if (!document.getElementById('rsndBtn').classList.contains('rdy')) return;
+      for (var i = 1; i <= 6; i++) { var b = document.getElementById('o' + i); b.value = ''; b.classList.remove('ok', 'er'); }
+      document.getElementById('otpVerifyBtn').disabled = true;
+      document.getElementById('otpEt').classList.remove('on');
+      startTmr(); document.getElementById('o1').focus();
+      notify('OTP Resent', 'New OTP sent to your mobile number', 'info');
+    }
+
+    /* ══════════════════════
+       SUCCESS
+    ══════════════════════ */
+    function showSuccess(identifier) {
+      document.getElementById('uEmail').textContent = identifier;
+      document.getElementById('mainForm').style.display = 'none';
+      document.getElementById('cardFoot').style.display = 'none';
+      document.getElementById('sucScreen').classList.add('on');
+      var c = 5; document.getElementById('cdwn').textContent = c;
+      var t = setInterval(function () { c--; document.getElementById('cdwn').textContent = c; if (c <= 0) { clearInterval(t); goDash(); } }, 1000);
+      notify('Login Successful', 'Redirecting to dashboard...', 'success');
+    }
+    function goDash() { alert('🎉 Opening Vidyasetu Dashboard!\n(In production, this navigates to the admin panel)'); }
+
+    /* ══════════════════════
+       NOTIFICATIONS
+    ══════════════════════ */
+    var nTimer = null;
+    function notify(title, msg, type) {
+      clearTimeout(nTimer);
+      var icons = {
+        success: '<i class="fas fa-check-circle" style="color:var(--green);font-size:1.2rem;margin-top:2px;"></i>',
+        error: '<i class="fas fa-exclamation-circle" style="color:var(--red);font-size:1.2rem;margin-top:2px;"></i>',
+        info: '<i class="fas fa-info-circle" style="color:var(--blue);font-size:1.2rem;margin-top:2px;"></i>'
+      };
+      var borders = { success: 'var(--green)', error: 'var(--red)', info: 'var(--blue)' };
+      var el = document.getElementById('notif');
+      el.style.borderLeftColor = borders[type] || borders.info;
+      document.getElementById('nIcon').innerHTML = icons[type] || icons.info;
+      document.getElementById('nTitle').textContent = title;
+      document.getElementById('nMsg').textContent = msg;
+      el.classList.add('on');
+      nTimer = setTimeout(function () { el.classList.remove('on'); }, 4000);
+    }
+
+    /* enter key helpers */
+    document.getElementById('pwEmail').addEventListener('keypress', function (e) { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('contBtn').click(); } });
+    document.getElementById('mobIn').addEventListener('keypress', function (e) { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('otpContBtn').click(); } });
+  </script>
+</body>
+</html>

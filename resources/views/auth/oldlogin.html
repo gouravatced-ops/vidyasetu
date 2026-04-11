@@ -1,0 +1,322 @@
+@extends('layouts.auth')
+
+@section('title', 'Login - VidyaSetu')
+
+@section('content')
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="flex justify-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-school text-white text-2xl"></i>
+                </div>
+            </div>
+            <h2 class="mt-6 text-3xl font-bold text-gray-900">Welcome back</h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Sign in to your VidyaSetu account
+            </p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="bg-white py-8 px-6 shadow-2xl rounded-2xl border border-gray-100">
+            <form id="loginForm" class="space-y-6" action="{{ route('login.post') }}" method="POST">
+                @csrf
+
+                <!-- Email Input -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address
+                    </label>
+                    <div class="relative">
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autocomplete="email"
+                            required
+                            value="{{ old('email') }}"
+                            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 @error('email') border-red-300 @enderror"
+                            placeholder="Enter your email address"
+                        >
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                    </div>
+                    @error('email')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Password Input -->
+                <div id="passwordField">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            required
+                            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 @error('password') border-red-300 @enderror"
+                            placeholder="Enter your password"
+                        >
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button type="button" id="togglePassword" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    @error('password')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- OTP Input (Hidden initially) -->
+                <div id="otpField" class="hidden">
+                    <label for="otp" class="block text-sm font-medium text-gray-700 mb-2">
+                        Enter OTP
+                    </label>
+                    <div class="relative">
+                        <input
+                            id="otp"
+                            name="otp"
+                            type="text"
+                            maxlength="6"
+                            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-center text-2xl tracking-widest @error('otp') border-red-300 @enderror"
+                            placeholder="000000"
+                        >
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-key text-gray-400"></i>
+                        </div>
+                    </div>
+                    @error('otp')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-2 text-sm text-gray-500">
+                        OTP sent to your registered email/phone
+                    </p>
+                </div>
+
+                <!-- Hidden login type field -->
+                <input type="hidden" name="login_type" id="loginType" value="password">
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input
+                            id="remember_me"
+                            name="remember"
+                            type="checkbox"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        >
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-900">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Error Messages -->
+                <div id="errorMessages" class="hidden">
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                        <div class="flex">
+                            <i class="fas fa-exclamation-circle text-red-400 mt-0.5 mr-2"></i>
+                            <span id="errorText"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button
+                        type="submit"
+                        id="loginButton"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                    >
+                        <span id="buttonText" class="flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Sign In
+                        </span>
+                        <div id="loadingSpinner" class="hidden ml-2">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Login Mode Toggle -->
+                <div class="text-center">
+                    <button
+                        type="button"
+                        id="toggleLoginMode"
+                        class="text-sm text-blue-600 hover:text-blue-500 font-medium transition-colors"
+                    >
+                        <i class="fas fa-mobile-alt mr-1"></i>
+                        Login with OTP instead
+                    </button>
+                </div>
+            </form>
+
+            <!-- Social Login (Optional) -->
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-google text-red-500"></i>
+                        <span class="ml-2">Google</span>
+                    </button>
+                    <button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-facebook text-blue-600"></i>
+                        <span class="ml-2">Facebook</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="text-center">
+            <p class="text-sm text-gray-600">
+                Don't have an account?
+                <a href="/register" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                    Sign up now
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+    const toggleLoginMode = document.getElementById('toggleLoginMode');
+    const passwordDiv = document.getElementById('passwordField');
+    const otpDiv = document.getElementById('otpField');
+    const buttonText = document.getElementById('buttonText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const errorMessages = document.getElementById('errorMessages');
+    const errorText = document.getElementById('errorText');
+
+    let isOtpMode = false;
+
+    // Toggle password visibility
+    togglePassword.addEventListener('click', function() {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+
+    // Toggle login mode
+    toggleLoginMode.addEventListener('click', function() {
+        isOtpMode = !isOtpMode;
+
+        if (isOtpMode) {
+            passwordDiv.classList.add('hidden');
+            otpDiv.classList.remove('hidden');
+            buttonText.innerHTML = '<i class="fas fa-key mr-2"></i>Verify OTP';
+            toggleLoginMode.innerHTML = '<i class="fas fa-lock mr-1"></i>Login with Password instead';
+
+            // Add send OTP button
+            if (!document.getElementById('sendOtpBtn')) {
+                const sendOtpBtn = document.createElement('button');
+                sendOtpBtn.id = 'sendOtpBtn';
+                sendOtpBtn.type = 'button';
+                sendOtpBtn.className = 'mt-2 text-sm text-blue-600 hover:text-blue-500 font-medium transition-colors';
+                sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane mr-1"></i>Send OTP to my email';
+                otpDiv.appendChild(sendOtpBtn);
+            }
+        } else {
+            passwordDiv.classList.remove('hidden');
+            otpDiv.classList.add('hidden');
+            buttonText.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Sign In';
+            toggleLoginMode.innerHTML = '<i class="fas fa-mobile-alt mr-1"></i>Login with OTP instead';
+
+            // Remove send OTP button
+            const sendOtpBtn = document.getElementById('sendOtpBtn');
+            if (sendOtpBtn) {
+                sendOtpBtn.remove();
+            }
+        }
+    });
+
+    // Form submission
+    loginForm.addEventListener('submit', function(e) {
+        // Update login type
+        document.getElementById('loginType').value = isOtpMode ? 'otp' : 'password';
+
+        // Show loading state
+        const submitButton = document.getElementById('loginButton');
+        submitButton.disabled = true;
+        loadingSpinner.classList.remove('hidden');
+
+        // Let the form submit normally - Laravel will handle validation and redirection
+    });
+
+    // Handle OTP sending separately
+    document.addEventListener('click', async function(e) {
+        if (e.target.id === 'sendOtpBtn' || e.target.closest('#sendOtpBtn')) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showError('Please enter your email address first.');
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ route("send.otp") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showSuccess('OTP sent successfully! Check your email.');
+                    // For demo purposes, show the OTP in console
+                    console.log('Demo OTP:', result.otp);
+                } else {
+                    showError(result.message || 'Failed to send OTP.');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            }
+        }
+    });
+
+    function showError(message) {
+        errorText.textContent = message;
+        errorMessages.classList.remove('hidden');
+        setTimeout(() => {
+            errorMessages.classList.add('hidden');
+        }, 5000);
+    }
+
+    function showSuccess(message) {
+        // You can implement a success message display here
+        console.log('Success:', message);
+    }
+});
+</script>
+@endsection
