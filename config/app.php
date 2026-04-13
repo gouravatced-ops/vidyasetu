@@ -14,6 +14,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'version' => env('APP_VERSION', '1.0.0'),
+    'school_address' => env('APP_SCHOOL_ADDRESS', 'Patna, Bihar, India'),
 
     /*
     |--------------------------------------------------------------------------

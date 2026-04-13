@@ -59,7 +59,7 @@
             <!-- Page content -->
             <div class="content">
                 @yield('content')
-            </main>
+            </div>
 
             <!-- Footer -->
             <x-admin-footer />
@@ -69,6 +69,7 @@
     @stack('scripts')
     <script>
         window.userName = @json(auth()->user()->name);
+        window.userRole = @json(auth()->user()->role->name ?? null);
     </script>
     <script src="{{ asset('js/dashboard.js') }}"></script>
     <script src="{{ asset('js/assets/main.js') }}"></script>

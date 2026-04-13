@@ -5,8 +5,16 @@
 window.addEventListener('load', function () {
     setTimeout(function () {
         var l = document.getElementById('pageLoader');
-        l.style.opacity = '0';
-        setTimeout(function () { l.style.display = 'none'; loadStatCards(); }, 400);
+        if (l) {
+            l.style.opacity = '0';
+            setTimeout(function () { l.style.display = 'none'; }, 400);
+        }
+        if (document.getElementById('statCards')) {
+            loadStatCards();
+        }
+        if (document.getElementById('studentTbody')) {
+            loadStudentTable();
+        }
     }, 2000);
 });
 
@@ -56,13 +64,19 @@ function navTo(pageId) {
 function toggleDD(id) {
     var all = ['langDD', 'msgDD', 'notifDD', 'profileDD'];
     all.forEach(function (did) {
-        if (did !== id) document.getElementById(did).classList.remove('show');
+        var el = document.getElementById(did);
+        if (el && did !== id) el.classList.remove('show');
     });
-    document.getElementById(id).classList.toggle('show');
+    var target = document.getElementById(id);
+    if (target) target.classList.toggle('show');
 }
 document.addEventListener('click', function (e) {
-    if (!e.target.closest('.hdr-actions'))
-        ['langDD', 'msgDD', 'notifDD', 'profileDD'].forEach(function (id) { document.getElementById(id).classList.remove('show'); });
+    if (!e.target.closest('.hdr-actions')) {
+        ['langDD', 'msgDD', 'notifDD', 'profileDD'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.remove('show');
+        });
+    }
 });
 
 /* ═══════════════════════════════
@@ -83,13 +97,14 @@ function showToast(title, msg, type) {
     STAT CARDS (skeleton → real)
 ═══════════════════════════════ */
 function loadStatCards() {
+    var container = document.getElementById('statCards');
+    if (!container) return;
     var stats = [
         { icon: 'fa-user-graduate', val: '50,000', lbl: 'Students', trend: '+320 this month', up: true, ic: 'si-green', bc: 'sc-green' },
         { icon: 'fa-chalkboard-teacher', val: '10,000', lbl: 'Teachers', trend: '+45 this month', up: true, ic: 'si-blue', bc: 'sc-blue' },
         { icon: 'fa-users', val: '15,000', lbl: 'Parents', trend: '+210 this month', up: true, ic: 'si-orange', bc: 'sc-orange' },
         { icon: 'fa-rupee-sign', val: '₹30,000', lbl: 'Total Earnings', trend: '+₹4,200 this week', up: true, ic: 'si-yellow', bc: 'sc-yellow' },
     ];
-    var container = document.getElementById('statCards');
     container.innerHTML = '';
     stats.forEach(function (s) {
         var col = document.createElement('div');
@@ -102,11 +117,15 @@ function loadStatCards() {
 /* ═══════════════════════════════
     CALENDAR
 ═══════════════════════════════ */
-var calDate = new Date(2024, 3, 1); // April 2024
+var calDate = new Date(); // current date
 function buildCalendar() {
+    var widget = document.getElementById('calendarWidget');
+    if (!widget) return;
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    var today = 14; var events = [18]; var highlight = [27];
+    var todayDate = new Date(); // current date object
+    var today = todayDate.getDate(); // current day number
+    var events = [18]; var highlight = [27];
     var y = calDate.getFullYear(), m = calDate.getMonth();
     var first = new Date(y, m, 1).getDay();
     var daysInMonth = new Date(y, m + 1, 0).getDate();
@@ -128,11 +147,13 @@ function buildCalendar() {
     var rem = (7 - ((first + daysInMonth) % 7)) % 7;
     for (var r = 1; r <= rem; r++)html += '<div class="cal-day other-month">' + r + '</div>';
     html += '</div>';
-    document.getElementById('calendarWidget').innerHTML = html;
+    widget.innerHTML = html;
 }
 function prevMonth() { calDate.setMonth(calDate.getMonth() - 1); buildCalendar(); }
 function nextMonth() { calDate.setMonth(calDate.getMonth() + 1); buildCalendar(); }
-buildCalendar();
+if (document.getElementById('calendarWidget')) {
+    buildCalendar();
+}
 
 /* ═══════════════════════════════
     STUDENT TABLE
@@ -172,6 +193,8 @@ function loadStudentTable() {
 }
 function renderTable(data) {
     var tbody = document.getElementById('studentTbody');
+    if (!tbody) return;
+    var canManageStudents = ['admin', 'school_admin', 'super_admin', 'teacher'].includes(window.userRole);
     tbody.innerHTML = '';
     data.forEach(function (s, i) {
         var tr = document.createElement('tr');
@@ -194,6 +217,9 @@ function renderTable(data) {
             '</div></td>';
         tbody.appendChild(tr);
     });
+    if (!canManageStudents) {
+        tbody.querySelectorAll('.tbl-edit, .tbl-del').forEach(function (btn) { btn.style.display = 'none'; });
+    }
 }
 function toggleAll(cb) {
     document.querySelectorAll('.row-check').forEach(function (c) { c.checked = cb.checked; });
@@ -233,4 +259,4 @@ function sortTable(col) {
 const userName = window.userName;
 
 /* welcome toast on load */
-setTimeout(function () { showToast('Welcome back!', userName +' – Dashboard loaded successfully', 'success'); }, 2600);
+setTimeout(function () { showToast('Welcome back!', userName + ' – Dashboard loaded successfully', 'success'); }, 2600);

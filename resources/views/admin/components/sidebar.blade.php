@@ -1,12 +1,5 @@
 <aside id="sidebar">
-    <!-- Brand -->
-    <div class="sb-brand">
-        <div class="sb-logo">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-        </div>
-        <span class="sb-name">Vidyasetu<sup class="sb-tm">TM</sup></span>
+    <div class="sb-topbar">
         <button class="sb-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
     </div>
 
@@ -15,39 +8,36 @@
         <ul style="list-style:none;padding:0;">
 
             <li class="nav-item">
-                <div class="nav-link-item active open" data-tip="Dashboard"
-                    onclick="toggleMenu(this,'menu-dash');navTo('page-dashboard')">
-                    <span class="nav-icon"><i class="fas fa-th-large"></i></span>
+                <div class="nav-link-item active open" data-tip="Dashboard">
+                    <a href="{{ route('admin.dashboard') }}">
+                    <span class="nav-icon"><i class="fas fa-th-large"></i></span> &nbsp;&nbsp;
                     <span class="nav-label">Dashboard</span>
-                    <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
                 </div>
-                <ul class="sub-menu open" id="menu-dash">
-                    <li><a href="#" class="active" onclick="return false">Admin</a></li>
-                    <li><a href="#">Student</a></li>
-                    <li><a href="#">Parents</a></li>
-                </ul>
             </li>
 
+            @if(auth()->user()->hasAnyRole(['admin','school_admin','super_admin']))
             <li class="nav-item">
-                <div class="nav-link-item" data-tip="Students"
-                    onclick="toggleMenu(this,'menu-students');navTo('page-students')">
+                <div class="nav-link-item" data-tip="Students" onclick="toggleMenu(this,'menu-students')">
                     <span class="nav-icon"><i class="fas fa-user-graduate"></i></span>
                     <span class="nav-label">Students</span>
                     <span class="nav-badge">50K</span>
                     <i class="fas fa-chevron-right nav-arrow"></i>
                 </div>
                 <ul class="sub-menu" id="menu-students">
-                    <li><a href="#" onclick="navTo('page-students');return false">All Students</a></li>
+                    <li><a href="{{ route('admin.students.index') }}">All Students</a></li>
                     <li><a href="#">Student Details</a></li>
                     <li><a href="#">Admit Form</a></li>
                     <li><a href="#">Student Promotion</a></li>
                 </ul>
             </li>
+            @endif
 
             <li class="nav-item">
                 <div class="nav-link-item" data-tip="Teachers" onclick="toggleMenu(this,'menu-teachers')">
                     <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
                     <span class="nav-label">Teachers</span>
+                    <span class="nav-badge">100</span>
                     <i class="fas fa-chevron-right nav-arrow"></i>
                 </div>
                 <ul class="sub-menu" id="menu-teachers">

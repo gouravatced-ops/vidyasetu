@@ -1,25 +1,16 @@
 <!-- ═══ TOP HEADER ═══ -->
 <header class="top-header">
     <button class="hdr-mobile-toggle" onclick="openMobileSidebar()"><i class="fas fa-bars"></i></button>
-    <div class="hdr-title">Welcome To <span>Vidyasetu</span> School Management System</div>
-
-    <div class="hdr-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search here...">
+    <div class="hdr-brand">
+        <div class="hdr-logo-circle">VS</div>
+        <div class="hdr-title-block">
+            <div class="hdr-title">{{ config('app.name', 'Vidyasetu') }} Admin Dashboard</div>
+            <div class="hdr-subtitle">{{ config('app.school_address', 'Patna, Bihar, India') }}</div>
+            <div class="hdr-alert"> Subscription expires in 10 days</div>
+        </div>
     </div>
 
     <div class="hdr-actions">
-        <!-- Language -->
-        <div style="position:relative;">
-            <button class="hdr-icon-btn" title="Language" onclick="toggleDD('langDD')"><i
-                    class="fas fa-globe"></i></button>
-            <div class="hdr-dropdown" id="langDD" style="min-width:140px;">
-                <div class="dd-item"><i class="fas fa-check" style="color:var(--green);"></i> English</div>
-                <div class="dd-item"><i class="fas fa-circle" style="opacity:0;"></i> हिंदी</div>
-                <div class="dd-item"><i class="fas fa-circle" style="opacity:0;"></i> বাংলা</div>
-            </div>
-        </div>
-
         <!-- Messages -->
         <div style="position:relative;">
             <button class="hdr-icon-btn" onclick="toggleDD('msgDD')">

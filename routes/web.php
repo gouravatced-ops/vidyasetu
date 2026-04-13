@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\StudentController;
 
 Route::get('/', function () {
     return view('home');
@@ -32,9 +34,7 @@ Route::middleware('auth')->group(function () {
 
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/users', function () {
             return view('admin.dashboard');
@@ -56,9 +56,7 @@ Route::middleware('auth')->group(function () {
             return view('admin.dashboard');
         })->name('subjects.index');
 
-        Route::get('/students', function () {
-            return view('admin.dashboard');
-        })->name('students.index');
+        Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 
         Route::get('/students/create', function () {
             return view('admin.dashboard');
