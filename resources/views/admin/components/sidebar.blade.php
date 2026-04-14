@@ -81,8 +81,8 @@
                     <i class="fas fa-chevron-right nav-arrow"></i>
                 </div>
                 <ul class="sub-menu" id="menu-class">
-                    <li><a href="#">Manage Classes</a></li>
-                    <li><a href="#">Sections</a></li>
+                    <li><a href="{{ route('admin.classes.index') }}">Manage Classes</a></li>
+                    <li><a href="{{ route('admin.sections.index') }}">Sections</a></li>
                 </ul>
             </li>
 

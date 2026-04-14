@@ -23,6 +23,105 @@ class AuthController extends Controller
     }
 
     /**
+     * Show the forgot password form
+     */
+    public function showForgetPasswordForm()
+    {
+        return view('auth.forgetpassword');
+    }
+
+    /**
+     * Handle forgot password request and reset submission
+     */
+    public function handleForgetPassword(Request $request)
+    {
+        if ($request->filled('otp')) {
+            $validator = Validator::make($request->all(), [
+                'identifier' => 'required|string',
+                'otp' => 'required|digits:6',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
+            $user = User::where('email', $request->identifier)
+                ->orWhere('name', $request->identifier)
+                ->first();
+
+            if (!$user) {
+                return back()->withErrors(['identifier' => 'No account found with that email or username.'])->withInput();
+            }
+
+            if (!$user->is_active) {
+                return back()->withErrors(['identifier' => 'Account is inactive. Please contact school administration.'])->withInput();
+            }
+
+            $otpLog = OtpLog::where('user_id', $user->id)
+                ->where('recipient', $user->email)
+                ->where('purpose', 'password_reset')
+                ->where('otp_code', $request->otp)
+                ->where('is_used', false)
+                ->where('expires_at', '>', now())
+                ->latest()
+                ->first();
+
+            if (!$otpLog) {
+                return back()->withErrors(['otp' => 'Invalid or expired OTP.'])->withInput();
+            }
+
+            $otpLog->markAsUsed();
+
+            $user->password = Hash::make($request->password);
+            $user->password_changed_at = now();
+            $user->save();
+
+            return redirect()->route('login')->with('status', 'Password reset successfully. You can now sign in with your new password.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'identifier' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::where('email', $request->identifier)
+            ->orWhere('name', $request->identifier)
+            ->first();
+
+        if (!$user) {
+            return back()->withErrors(['identifier' => 'No account found with that email or username.'])->withInput();
+        }
+
+        if (!$user->is_active) {
+            return back()->withErrors(['identifier' => 'Account is inactive. Please contact school administration.'])->withInput();
+        }
+
+        $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        OtpLog::create([
+            'user_id' => $user->id,
+            'type' => 'email',
+            'recipient' => $user->email,
+            'otp_code' => $otp,
+            'purpose' => 'password_reset',
+            'expires_at' => now()->addMinutes(10),
+            'is_used' => false,
+            'attempts' => 0,
+            'successful' => false,
+        ]);
+
+        Log::info("Password reset OTP for {$user->email}: {$otp}");
+
+        return back()->with('status', 'OTP sent to your registered email. Enter it below to reset your password.')
+            ->withInput(['identifier' => $request->identifier])
+            ->with('showResetFields', true);
+    }
+
+    /**
      * Handle login attempt
      */
     public function login(Request $request)
@@ -47,14 +146,17 @@ class AuthController extends Controller
 
         // Check if user exists
         if (!$user) {
+            $field = $request->login_type === 'password' ? 'email' : 'phone';
+            $message = $request->login_type === 'password' ? 'Wrong email or password' : 'Invalid phone number';
             $this->logFailedLogin($request, 'User not found');
-            return back()->withErrors(['email' => $request->login_type === 'password' ? 'Invalid credentials' : 'Invalid phone number'])->withInput();
+            return back()->withErrors([$field => $message])->withInput();
         }
 
         // Check if user is active
         if (!$user->is_active) {
-            $this->logFailedLogin($request, 'Account deactivated');
-            return back()->withErrors(['email' => 'Account is deactivated'])->withInput();
+            $field = $request->login_type === 'password' ? 'email' : 'phone';
+            $this->logFailedLogin($request, 'Account is deactivated');
+            return back()->withErrors([$field => 'Account is inactive. Please contact school administration for login access.'])->withInput();
         }
 
         // Handle OTP login
@@ -72,22 +174,39 @@ class AuthController extends Controller
      */
     private function handlePasswordLogin(Request $request, User $user, array $credentials)
     {
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-            $request->session()->regenerate();
-
-            // Update last login
-            $user->update(['last_login_at' => now()]);
-
-            // Log successful login
-            $this->logSuccessfulLogin($request, $user);
-
-            return $this->redirectToRoleBasedDashboard($user);
+        if (!Hash::check($credentials['password'], $user->password)) {
+            $this->logFailedLogin($request, 'Invalid password');
+            return back()->withErrors(['password' => 'Invalid credentials'])->withInput();
         }
 
-        // Log failed login
-        $this->logFailedLogin($request, 'Invalid password');
+        if ($this->passwordHasExpired($user)) {
+            return redirect()->route('password.request')
+                ->with('status', 'Please reset your password due to security reasons.')
+                ->withInput(['identifier' => $request->email]);
+        }
 
-        return back()->withErrors(['password' => 'Invalid credentials'])->withInput();
+        Auth::login($user, $request->has('remember'));
+        $request->session()->regenerate();
+
+        // Update last login
+        $user->update(['last_login_at' => now()]);
+
+        // Log successful login
+        $this->logSuccessfulLogin($request, $user);
+
+        return $this->redirectToRoleBasedDashboard($user);
+    }
+
+    /**
+     * Check whether a password has expired after 30 days
+     */
+    private function passwordHasExpired(User $user): bool
+    {
+        if (!$user->password_changed_at) {
+            return false;
+        }
+
+        return $user->password_changed_at->lt(now()->subDays(30));
     }
 
     /**
@@ -219,7 +338,13 @@ class AuthController extends Controller
      */
     private function logFailedLogin(Request $request, string $reason)
     {
-        $user = User::where('email', $request->email)->first();
+        $user = null;
+
+        if ($request->filled('email')) {
+            $user = User::where('email', $request->email)->first();
+        } elseif ($request->filled('phone')) {
+            $user = User::where('phone', $request->phone)->first();
+        }
 
         LoginLog::create([
             'user_id' => $user ? $user->id : null,

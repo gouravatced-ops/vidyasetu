@@ -181,13 +181,21 @@ function togEye() {
 ══════════════════════ */
 function onMobType() {
     var v = document.getElementById('mobIn').value;
-    document.getElementById('getOtpBtn').disabled = v.length !== 10;
+    var valid = v.length === 10;
+    document.getElementById('getOtpBtn').disabled = !valid;
+    document.getElementById('otpContBtn').disabled = !valid;
     document.getElementById('mobEt').classList.remove('on');
 }
 
 function otpContinue() {
     var mob = document.getElementById('mobIn').value;
-    if (mob.length !== 10) { document.getElementById('mobEt').classList.add('on'); return; }
+    if (mob.length !== 10) {
+        document.getElementById('mobEt').classList.add('on');
+        return;
+    }
+    var cBtn = document.getElementById('otpContBtn');
+    cBtn.classList.add('ld');
+    cBtn.disabled = true;
     doSendOTP();
 }
 
@@ -230,9 +238,11 @@ function doSendOTP() {
         notify('OTP Sent', '6-digit OTP sent to your mobile number', 'success');
     })
     .catch(function (error) {
-        btn.disabled = false;
+        var mob = document.getElementById('mobIn').value;
+        btn.disabled = mob.length !== 10;
         document.getElementById('getOtpLbl').textContent = 'Get OTP';
         cBtn.classList.remove('ld');
+        cBtn.disabled = mob.length !== 10;
         notify('OTP Error', error.message || 'Unable to send OTP', 'error');
     });
 }
@@ -281,7 +291,9 @@ function chgNum() {
     document.getElementById('mobIn').readOnly = false;
     document.getElementById('otpStep').classList.remove('show');
     document.getElementById('otpContBtn').style.display = 'flex';
-    document.getElementById('otpContBtn').classList.remove('ld'); document.getElementById('otpContBtn').disabled = false;
+    document.getElementById('otpContBtn').classList.remove('ld');
+    document.getElementById('otpContBtn').disabled = document.getElementById('mobIn').value.length !== 10;
+    document.getElementById('getOtpBtn').disabled = document.getElementById('mobIn').value.length !== 10;
     setOtpStep(1); otpSent = false;
     for (var i = 1; i <= 6; i++) { var b = document.getElementById('o' + i); b.value = ''; b.classList.remove('ok', 'er'); }
     document.getElementById('otpVerifyBtn').disabled = true;

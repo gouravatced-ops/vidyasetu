@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::component('admin.components.sidebar', 'admin-sidebar');
         Blade::component('admin.components.header', 'admin-header');
         Blade::component('admin.components.footer', 'admin-footer');
+        Blade::component('admin.components.table-toolbar', 'admin-table-toolbar');
         Blade::component('parent.components.sidebar', 'parent-sidebar');
         Blade::component('parent.components.header', 'parent-header');
         Blade::component('parent.components.footer', 'parent-footer');

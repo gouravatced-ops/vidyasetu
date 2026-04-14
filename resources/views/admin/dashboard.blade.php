@@ -35,9 +35,15 @@
                 </div>
                 <div class="panel-body">
                     <div class="chart-legend">
-                        <div class="cl-item"><div class="cl-dot" style="background:#3b82f6;"></div>Present</div>
-                        <div class="cl-item"><div class="cl-dot" style="background:#ef4444;"></div>Absent</div>
-                        <div class="cl-item"><div class="cl-dot" style="background:#fbbf24;"></div>Leave</div>
+                        <div class="cl-item">
+                            <div class="cl-dot" style="background:#3b82f6;"></div>Present
+                        </div>
+                        <div class="cl-item">
+                            <div class="cl-dot" style="background:#ef4444;"></div>Absent
+                        </div>
+                        <div class="cl-item">
+                            <div class="cl-dot" style="background:#fbbf24;"></div>Leave
+                        </div>
                     </div>
                     <div class="attendance-chart">
                         <div class="attendance-bar" style="height:92%"><span>Mon</span></div>
@@ -194,4 +200,12 @@
         </div>
     </div>
 </div><!-- /page-dashboard -->
+<script>
+    const userName = window.userName;
+
+    /* welcome toast on load */
+    setTimeout(function() {
+        showToast('Welcome back!', userName + ' – Dashboard loaded successfully', 'success');
+    }, 2600);
+</script>
 @endsection

@@ -255,8 +255,3 @@ function sortTable(col) {
     });
     rows.forEach(function (r) { tbody.appendChild(r); });
 }
-
-const userName = window.userName;
-
-/* welcome toast on load */
-setTimeout(function () { showToast('Welcome back!', userName + ' – Dashboard loaded successfully', 'success'); }, 2600);

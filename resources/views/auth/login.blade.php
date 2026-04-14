@@ -9,6 +9,12 @@
             <div class="card-sub">Enter your credentials to access the portal</div>
         </div>
 
+        @if(session('status'))
+            <div class="form-success" style="margin:0 0 18px;padding:14px 18px;border:1px solid rgba(22, 163, 74, .22);background:rgba(220, 252, 231, .9);color:#166534;border-radius:12px;">
+                {{ session('status') }}
+            </div>
+        @endif
+
         @if($errors->any())
             <div class="form-error" style="margin:0 0 18px;padding:14px 18px;border:1px solid rgba(220,38,38,.22);background:rgba(254,226,226,.9);color:#b91c1c;border-radius:12px;">
                 {{ implode(' ', $errors->all()) }}
@@ -16,12 +22,12 @@
         @endif
 
         <!-- TABS -->
-        <div class="tabs" data-t="pw" id="tabBar">
+        <div class="tabs" data-t="otp" id="tabBar">
             <div class="tab-gl"></div>
-            <button class="tbtn" id="t1" onclick="swTab('pw')">
+            <button type="button" class="tbtn" id="t1" onclick="swTab('pw')">
                 <i class="fas fa-lock"></i> Email & Password
             </button>
-            <button class="tbtn on" id="t2" onclick="swTab('otp')">
+            <button type="button" class="tbtn on" id="t2" onclick="swTab('otp')">
                 <i class="fas fa-mobile-alt"></i> Login with OTP
             </button>
         </div>
@@ -68,7 +74,7 @@
                     <div class="iw">
                         <input class="inp pw" id="pwIn" name="password" type="password" placeholder="Enter your password"
                             autocomplete="current-password" oninput="onPwType()">
-                        <button class="eye" onclick="togEye()"><i class="fas fa-eye" id="eyeIc"></i></button>
+                        <button type="button" class="eye" onclick="togEye()"><i class="fas fa-eye" id="eyeIc"></i></button>
                     </div>
                     <div class="et" id="pwEt"><i class="fas fa-exclamation-circle"></i> Password must be at least 6
                         characters</div>
@@ -82,7 +88,7 @@
                             <div class="cap-noise"></div>
                             <span id="capCode" style="position:relative;z-index:1;letter-spacing:6px;"></span>
                         </div>
-                        <button class="cap-refresh" onclick="genCap(true)" title="Refresh captcha"><i
+                        <button type="button" type="button" class="cap-refresh" onclick="genCap(true)" title="Refresh captcha"><i
                                 class="fas fa-rotate-right" id="capRefreshIc"></i></button>
                     </div>
                     <div class="iw">
@@ -137,7 +143,7 @@
                     <input class="inp" id="mobIn" type="tel" maxlength="10" placeholder="10-digit mobile number"
                         style="padding-left:52px;padding-right:96px;"
                         oninput="this.value=this.value.replace(/\D/g,'');onMobType()">
-                    <button
+                    <button type="button"
                         style="position:absolute;right:9px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,var(--blue),var(--navy2));color:#fff;border:none;border-radius:6px;padding:7px 12px;font-family:'Sora',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:opacity .2s;box-shadow:0 2px 8px rgba(30,64,175,.25);"
                         id="getOtpBtn" onclick="doSendOTP()" disabled>
                         <span id="getOtpLbl">Get OTP</span>
@@ -150,8 +156,8 @@
             <div class="reveal" id="otpStep">
                 <p class="sent-note">OTP sent to <strong id="sentTo"></strong> &nbsp;<span
                         style="font-size:.72rem;color:#94a3b8;cursor:pointer;" onclick="chgNum()">(Change)</span></p>
-                <div class="otp-hint"><i class="fas fa-info-circle"></i> Demo OTP: &nbsp;<strong>1 2 3 4 5 6</strong>
-                </div>
+                <!-- <div class="otp-hint"><i class="fas fa-info-circle"></i> Demo OTP: &nbsp;<strong>1 2 3 4 5 6</strong>
+                </div> -->
 
                 <div class="fg">
                     <label class="lbl"><i class="fas fa-key"></i> Enter 6-digit OTP</label>
@@ -175,7 +181,7 @@
 
                 <div class="ometa">
                     <span class="otimer" id="timerEl"></span>
-                    <button class="rsnd" id="rsndBtn" onclick="doResend()">Resend OTP</button>
+                    <button type="button" class="rsnd" id="rsndBtn" onclick="doResend()">Resend OTP</button>
                 </div>
 
                 <button class="btn btn-primary" id="otpVerifyBtn" onclick="handleOTPVerify()" disabled>
@@ -185,7 +191,7 @@
             </div>
 
             <!-- initial continue btn for otp -->
-            <button class="btn btn-primary" id="otpContBtn" onclick="otpContinue()" style="margin-top:4px;">
+            <button type="button" class="btn btn-primary" id="otpContBtn" onclick="otpContinue()" style="margin-top:4px;" disabled>
                 <span class="blbl">Continue &nbsp;<i class="fas fa-arrow-right"></i></span>
                 <div class="spin"></div>
             </button>
@@ -197,6 +203,6 @@
     <!-- Card Footer -->
     <div class="card-foot" id="cardFoot">
         <a href="#" class="cf-link"><i class="fas fa-question-circle"></i> Need Help?</a>
-        <a href="#" class="cf-link"><i class="fas fa-key"></i> Forgot Password?</a>
+        <a href="{{ route('password.request') }}" class="cf-link"><i class="fas fa-key"></i> Forgot Password?</a>
     </div>
 @endsection

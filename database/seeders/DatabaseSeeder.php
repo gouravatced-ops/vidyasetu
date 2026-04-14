@@ -16,7 +16,10 @@ class DatabaseSeeder extends Seeder
         // Seed roles first
         $this->call(RoleSeeder::class);
 
-        // Seed users
+        // Seed schools before users so we can assign tenants
+        $this->call(SchoolSeeder::class);
+
+        // Seed users with school assignments
         $this->call(UserSeeder::class);
 
         // Additional seeders can be added here

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\School;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,6 +22,10 @@ class UserSeeder extends Seeder
         $studentRole = Role::where('name', 'student')->first();
         $parentRole = Role::where('name', 'parent')->first();
 
+        // Get schools
+        $schoolA = School::firstWhere('code', 'DAVPAT') ?? School::first();
+        $schoolB = School::firstWhere('code', 'GVIS') ?? $schoolA;
+
         // Create Super Admin
         User::updateOrCreate(
             ['email' => 'admin@vidyasetu.com'],
@@ -29,7 +34,9 @@ class UserSeeder extends Seeder
                 'email' => 'admin@vidyasetu.com',
                 'phone' => '+919876543210',
                 'password' => Hash::make('password'),
+                'password_changed_at' => now(),
                 'role_id' => $superAdminRole->id,
+                'school_id' => $schoolA?->id,
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
                 'is_active' => true,
@@ -53,7 +60,9 @@ class UserSeeder extends Seeder
                 'email' => 'schooladmin@vidyasetu.com',
                 'phone' => '+919876543211',
                 'password' => Hash::make('password'),
+                'password_changed_at' => now(),
                 'role_id' => $schoolAdminRole->id,
+                'school_id' => $schoolA?->id,
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
                 'is_active' => true,
@@ -68,7 +77,9 @@ class UserSeeder extends Seeder
                 'email' => 'teacher@vidyasetu.com',
                 'phone' => '+919876543212',
                 'password' => Hash::make('password'),
+                'password_changed_at' => now(),
                 'role_id' => $teacherRole->id,
+                'school_id' => $schoolA?->id,
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
                 'is_active' => true,
@@ -83,6 +94,7 @@ class UserSeeder extends Seeder
                 'email' => 'student@vidyasetu.com',
                 'phone' => '+919876543213',
                 'password' => Hash::make('password'),
+                'password_changed_at' => now(),
                 'role_id' => $studentRole->id,
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
@@ -98,6 +110,7 @@ class UserSeeder extends Seeder
                 'email' => 'parent@vidyasetu.com',
                 'phone' => '+919876543214',
                 'password' => Hash::make('password'),
+                'password_changed_at' => now(),
                 'role_id' => $parentRole->id,
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
@@ -108,6 +121,7 @@ class UserSeeder extends Seeder
         // Create additional test users
         User::factory(10)->create([
             'role_id' => $studentRole->id,
+            'password_changed_at' => now(),
             'email_verified_at' => now(),
             'phone_verified_at' => now(),
             'is_active' => true,

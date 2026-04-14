@@ -398,11 +398,11 @@ CARD
 }
 
 .tabs[data-t="otp"] .tab-gl {
-    transform: translateX(0);
+    transform: translateX(100%);
 }
 
 .tabs[data-t="pw"] .tab-gl {
-    transform: translateX(100%);
+    transform: translateX(0);
 }
 
 .tbtn {

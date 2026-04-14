@@ -4,8 +4,8 @@
     <div class="hdr-brand">
         <div class="hdr-logo-circle">VS</div>
         <div class="hdr-title-block">
-            <div class="hdr-title">{{ config('app.name', 'Vidyasetu') }} Admin Dashboard</div>
-            <div class="hdr-subtitle">{{ config('app.school_address', 'Patna, Bihar, India') }}</div>
+            <div class="hdr-title">{{ auth()->user()->school->name ?? config('app.name', 'Vidyasetu') }} Admin Dashboard</div>
+            <div class="hdr-subtitle">{{ auth()->user()->school->address ?? config('app.school_address', 'Patna, Bihar, India') }}</div>
             <div class="hdr-alert"> Subscription expires in 10 days</div>
         </div>
     </div>

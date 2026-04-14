@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\StudentController;
 
 Route::get('/', function () {
@@ -24,6 +25,8 @@ Route::get('/demo/request', function () {
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::get('/forget-password', [AuthController::class, 'showForgetPasswordForm'])->name('password.request');
+    Route::post('/forget-password', [AuthController::class, 'handleForgetPassword'])->name('password.reset');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::post('/send-otp', [AuthController::class, 'sendOtp'])->name('send.otp');
 });
@@ -48,9 +51,19 @@ Route::middleware('auth')->group(function () {
             return view('admin.dashboard');
         })->name('schools.index');
 
-        Route::get('/classes', function () {
-            return view('admin.dashboard');
-        })->name('classes.index');
+        Route::get('/classes', [SchoolClassController::class, 'index'])->name('classes.index');
+        Route::get('/classes/create', [SchoolClassController::class, 'create'])->name('classes.create');
+        Route::post('/classes', [SchoolClassController::class, 'store'])->name('classes.store');
+        Route::get('/classes/{schoolClass}', [SchoolClassController::class, 'show'])->name('classes.show');
+        Route::get('/classes/{schoolClass}/edit', [SchoolClassController::class, 'edit'])->name('classes.edit');
+        Route::put('/classes/{schoolClass}', [SchoolClassController::class, 'update'])->name('classes.update');
+        Route::get('/classes/{schoolClass}/sections', [SchoolClassController::class, 'sectionsIndex'])->name('classes.sections.index');
+        Route::get('/classes/{schoolClass}/sections/create', [SchoolClassController::class, 'createSection'])->name('classes.sections.create');
+        Route::post('/classes/{schoolClass}/sections', [SchoolClassController::class, 'storeSection'])->name('classes.sections.store');
+        Route::get('/classes/{schoolClass}/sections/{section}/edit', [SchoolClassController::class, 'editSection'])->name('classes.sections.edit');
+        Route::put('/classes/{schoolClass}/sections/{section}', [SchoolClassController::class, 'updateSection'])->name('classes.sections.update');
+        Route::get('/classes/{schoolClass}/sections/{section}', [SchoolClassController::class, 'showSection'])->name('classes.sections.show');
+        Route::get('/sections', [SchoolClassController::class, 'sectionsAllIndex'])->name('sections.index');
 
         Route::get('/subjects', function () {
             return view('admin.dashboard');
