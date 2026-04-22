@@ -21,54 +21,57 @@
         </div>
 
         <div class="panel-body">
-            <form action="{{ route('admin.classes.update', $schoolClass) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="row gy-3">
-                    @if(!auth()->user()->school_id && $schools->isNotEmpty())
-                        <div class="col-12">
-                            <label for="school_id" class="form-label">School</label>
-                            <select name="school_id" id="school_id" class="form-select @error('school_id') is-invalid @enderror">
-                                <option value="">Select School</option>
-                                @foreach($schools as $school)
-                                    <option value="{{ $school->id }}" {{ old('school_id', $schoolClass->school_id) == $school->id ? 'selected' : '' }}>{{ $school->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('school_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <div class="card rounded-4 border-0 card-modern-form">
+                <div class="card-body p-4">
+                    <form action="{{ route('admin.classes.update', $schoolClass) }}" method="POST" class="class-create-form form-modern-grid">
+                        @csrf
+                        @method('PUT')
+                        <div class="row row-cols-1 row-cols-md-2 g-4">
+                            @if(!auth()->user()->school_id && $schools->isNotEmpty())
+                                <div>
+                                    <label for="school_id" class="form-label-modern">School</label>
+                                    <select name="school_id" id="school_id" class="form-select-modern @error('school_id') is-invalid @enderror">
+                                        <option value="">Select School</option>
+                                        @foreach($schools as $school)
+                                            <option value="{{ $school->id }}" {{ old('school_id', $schoolClass->school_id) == $school->id ? 'selected' : '' }}>{{ $school->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('school_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                            @endif
+
+                            <div>
+                                <label for="number" class="form-label-modern">Class Number</label>
+                                <input type="text" name="number" id="number" value="{{ old('number', $schoolClass->number) }}" class="form-control-modern @error('number') is-invalid @enderror" required>
+                                @error('number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div>
+                                <label for="display_number" class="form-label-modern">Display Number</label>
+                                <input type="text" name="display_number" id="display_number" value="{{ old('display_number', $schoolClass->display_number) }}" class="form-control-modern @error('display_number') is-invalid @enderror">
+                                @error('display_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div>
+                                <label for="name" class="form-label-modern">Class Name</label>
+                                <input type="text" name="name" id="name" value="{{ old('name', $schoolClass->name) }}" class="form-control-modern @error('name') is-invalid @enderror">
+                                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-12">
+                                <label for="description" class="form-label-modern">Description</label>
+                                <textarea name="description" id="description" class="form-control-modern @error('description') is-invalid @enderror" rows="4">{{ old('description', $schoolClass->description) }}</textarea>
+                                @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+
+                            <div class="col-12 form-create-actions">
+                                <a href="{{ route('admin.classes.index') }}" class="btn-outline-modern">Cancel</a>
+                                <button type="submit" class="btn-primary-modern"><i class="fas fa-save me-2"></i>Update Class</button>
+                            </div>
                         </div>
-                    @endif
-
-                    <div class="col-md-6">
-                        <label for="number" class="form-label">Class Number</label>
-                        <input type="text" name="number" id="number" value="{{ old('number', $schoolClass->number) }}" class="form-control @error('number') is-invalid @enderror" required>
-                        <div class="form-text">Use 0 or Nursery for Nursery, or custom text like KG1.</div>
-                        @error('number')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="display_number" class="form-label">Display Number</label>
-                        <input type="text" name="display_number" id="display_number" value="{{ old('display_number', $schoolClass->display_number) }}" class="form-control @error('display_number') is-invalid @enderror">
-                        @error('display_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Class Name</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $schoolClass->name) }}" class="form-control @error('name') is-invalid @enderror">
-                        @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="4">{{ old('description', $schoolClass->description) }}</textarea>
-                        @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="col-12 d-flex gap-2 justify-content-end">
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Update Class</button>
-                        <a href="{{ route('admin.classes.index') }}" class="btn btn-secondary">Cancel</a>
-                    </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 @endsection

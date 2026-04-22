@@ -57,12 +57,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/classes/{schoolClass}', [SchoolClassController::class, 'show'])->name('classes.show');
         Route::get('/classes/{schoolClass}/edit', [SchoolClassController::class, 'edit'])->name('classes.edit');
         Route::put('/classes/{schoolClass}', [SchoolClassController::class, 'update'])->name('classes.update');
+        Route::delete('/classes/{schoolClass}', [SchoolClassController::class, 'destroy'])->name('classes.destroy');
         Route::get('/classes/{schoolClass}/sections', [SchoolClassController::class, 'sectionsIndex'])->name('classes.sections.index');
         Route::get('/classes/{schoolClass}/sections/create', [SchoolClassController::class, 'createSection'])->name('classes.sections.create');
         Route::post('/classes/{schoolClass}/sections', [SchoolClassController::class, 'storeSection'])->name('classes.sections.store');
         Route::get('/classes/{schoolClass}/sections/{section}/edit', [SchoolClassController::class, 'editSection'])->name('classes.sections.edit');
         Route::put('/classes/{schoolClass}/sections/{section}', [SchoolClassController::class, 'updateSection'])->name('classes.sections.update');
+        Route::delete('/classes/{schoolClass}/sections/{section}', [SchoolClassController::class, 'destroySection'])->name('classes.sections.destroy');
         Route::get('/classes/{schoolClass}/sections/{section}', [SchoolClassController::class, 'showSection'])->name('classes.sections.show');
+        Route::post('/sections', [SchoolClassController::class, 'storeSectionGlobal'])->name('sections.store');
+        Route::delete('/sections/{section}', [SchoolClassController::class, 'destroySectionGlobal'])->name('sections.destroy');
         Route::get('/sections', [SchoolClassController::class, 'sectionsAllIndex'])->name('sections.index');
 
         Route::get('/subjects', function () {

@@ -1,0 +1,135 @@
+/* form labels: modern, light weight */
+.form-label-modern {
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #2c3e66;
+  margin-bottom: 0.5rem;
+}
+
+/* modern input fields: rounded-lg, border, focus glow */
+.form-control-modern, .form-select-modern {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.form-modern-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2rem;
+  align-items: flex-end;
+}
+
+.form-modern-grid .col-12 {
+  grid-column: 1 / -1;
+}
+
+.form-modern-grid .form-control-modern,
+.form-modern-grid .form-select-modern {
+  width: 100%;
+}
+
+.form-create-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.form-control-modern:focus, .form-select-modern:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+  outline: none;
+}
+
+/* floating effect for input groups */
+.input-group-modern {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.2s;
+  background: #fff;
+}
+
+.input-group-modern:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+}
+
+.input-group-modern .input-group-text {
+  background: transparent;
+  border: none;
+  color: #5b6e8c;
+  font-weight: 500;
+  padding-left: 1rem;
+}
+
+.input-group-modern .form-control {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0.7rem 0.7rem 0.7rem 0;
+}
+
+/* modal and card header styling */
+.modal-header-modern {
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1rem;
+}
+
+.modal-header-modern .modal-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.modal-content.rounded-4 {
+  border-radius: 1rem;
+}
+
+.card-modern-form {
+  border-radius: 1.5rem;
+}
+
+/* button primary modern */
+.btn-primary-modern {
+  background: linear-gradient(105deg, #2563eb 0%, #1e40af 100%);
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s;
+  box-shadow: 0 4px 8px rgba(37,99,235,0.2);
+  color: #fff;
+}
+
+.btn-primary-modern:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(105deg, #1d4ed8 0%, #1e3a8a 100%);
+  box-shadow: 0 12px 18px -8px rgba(37,99,235,0.4);
+}
+
+.btn-outline-modern {
+  border: 1.5px solid #cbd5e1;
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  color: #1e293b;
+  background-color: #fff;
+}
+
+.btn-outline-modern:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}

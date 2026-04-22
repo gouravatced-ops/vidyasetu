@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Traits\EncryptsRouteKey;
+use App\Services\UrlEncryption;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SchoolClass extends Model
 {
-    use HasFactory;
+    use HasFactory, EncryptsRouteKey;
 
     protected $fillable = [
         'school_id',
@@ -17,7 +19,17 @@ class SchoolClass extends Model
         'display_number',
         'name',
         'description',
+        'is_active',
     ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 
     public function school(): BelongsTo
     {
@@ -26,12 +38,21 @@ class SchoolClass extends Model
 
     public function sections(): HasMany
     {
-        return $this->hasMany(Section::class);
+        return $this->hasMany(Section::class)->where('is_active', true);
     }
 
     public function students(): HasMany
     {
         return $this->hasMany(User::class, 'school_class_id');
+    }
+
+    public function resolveChildRouteBinding($childType, $value, $field = null)
+    {
+        if ($childType === Section::class) {
+            return $this->sections()->whereKey(UrlEncryption::decryptId($value))->firstOrFail();
+        }
+
+        return parent::resolveChildRouteBinding($childType, $value, $field);
     }
 
     public static function toRoman(string $number): string

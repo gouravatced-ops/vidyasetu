@@ -22,6 +22,7 @@
     <!-- css file  -->
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
 
     <!-- Alpine.js for reactive components -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -32,15 +33,15 @@
 
     <!-- ═══ PAGE LOADER ═══ -->
     <div id="pageLoader">
-        <div class="loader-logo">
+        <!-- <div class="loader-logo">
             <svg viewBox="0 0 24 24">
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
             </svg>
-        </div>
+        </div> -->
         <div class="loader-bar">
             <div class="loader-fill"></div>
         </div>
-        <div class="loader-text">Loading Vidyasetu...</div>
+        <div class="loader-text">Loading Dashboard...</div>
     </div>
 
     <!-- ═══ TOAST CONTAINER ═══ -->

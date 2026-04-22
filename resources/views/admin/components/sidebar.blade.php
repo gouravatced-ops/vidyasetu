@@ -5,10 +5,15 @@
 
     <!-- Nav -->
     <nav class="sb-nav">
+        @php
+            $dashboardActive = request()->routeIs('admin.dashboard') ? 'active open' : '';
+            $studentsMenuOpen = request()->routeIs('admin.students.*') ? 'active open' : '';
+            $classMenuOpen = request()->routeIs('admin.classes.*') || request()->routeIs('admin.sections.*') ? 'active open' : '';
+        @endphp
         <ul style="list-style:none;padding:0;">
 
             <li class="nav-item">
-                <div class="nav-link-item active open" data-tip="Dashboard">
+                <div class="nav-link-item {{ $dashboardActive }}" data-tip="Dashboard">
                     <a href="{{ route('admin.dashboard') }}">
                     <span class="nav-icon"><i class="fas fa-th-large"></i></span> &nbsp;&nbsp;
                     <span class="nav-label">Dashboard</span>
@@ -18,14 +23,14 @@
 
             @if(auth()->user()->hasAnyRole(['admin','school_admin','super_admin']))
             <li class="nav-item">
-                <div class="nav-link-item" data-tip="Students" onclick="toggleMenu(this,'menu-students')">
+                <div class="nav-link-item {{ $studentsMenuOpen }}" data-tip="Students" onclick="toggleMenu(this,'menu-students')">
                     <span class="nav-icon"><i class="fas fa-user-graduate"></i></span>
                     <span class="nav-label">Students</span>
                     <span class="nav-badge">50K</span>
                     <i class="fas fa-chevron-right nav-arrow"></i>
                 </div>
-                <ul class="sub-menu" id="menu-students">
-                    <li><a href="{{ route('admin.students.index') }}">All Students</a></li>
+                <ul class="sub-menu {{ $studentsMenuOpen ? 'open' : '' }}" id="menu-students">
+                    <li><a class="{{ request()->routeIs('admin.students.index') ? 'active' : '' }}" href="{{ route('admin.students.index') }}">All Students</a></li>
                     <li><a href="#">Student Details</a></li>
                     <li><a href="#">Admit Form</a></li>
                     <li><a href="#">Student Promotion</a></li>
@@ -75,14 +80,14 @@
             </li>
 
             <li class="nav-item">
-                <div class="nav-link-item" data-tip="Class" onclick="toggleMenu(this,'menu-class')">
+                <div class="nav-link-item {{ $classMenuOpen }}" data-tip="Class" onclick="toggleMenu(this,'menu-class')">
                     <span class="nav-icon"><i class="fas fa-layer-group"></i></span>
                     <span class="nav-label">Class</span>
                     <i class="fas fa-chevron-right nav-arrow"></i>
                 </div>
-                <ul class="sub-menu" id="menu-class">
-                    <li><a href="{{ route('admin.classes.index') }}">Manage Classes</a></li>
-                    <li><a href="{{ route('admin.sections.index') }}">Sections</a></li>
+                <ul class="sub-menu {{ $classMenuOpen ? 'open' : '' }}" id="menu-class">
+                    <li><a class="{{ request()->routeIs('admin.classes.*') && !request()->routeIs('admin.classes.sections.*') ? 'active' : '' }}" href="{{ route('admin.classes.index') }}">Manage Classes</a></li>
+                    <li><a class="{{ request()->routeIs('admin.sections.index') ? 'active' : '' }}" href="{{ route('admin.sections.index') }}">Sections</a></li>
                 </ul>
             </li>
 

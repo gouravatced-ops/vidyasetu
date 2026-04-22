@@ -38,10 +38,10 @@ class SchoolClassController extends Controller
         $user = $this->currentUser();
 
         if ($user->hasAnyRole(['admin', 'super_admin'])) {
-            return SchoolClass::query();
+            return SchoolClass::where('is_active', true);
         }
 
-        return SchoolClass::where('school_id', $user->school_id);
+        return SchoolClass::where('school_id', $user->school_id)->where('is_active', true);
     }
 
     protected function sectionQuery(): \Illuminate\Database\Eloquent\Builder
@@ -49,10 +49,10 @@ class SchoolClassController extends Controller
         $user = $this->currentUser();
 
         if ($user->hasAnyRole(['admin', 'super_admin'])) {
-            return Section::query();
+            return Section::where('is_active', true);
         }
 
-        return Section::where('school_id', $user->school_id);
+        return Section::where('school_id', $user->school_id)->where('is_active', true);
     }
 
     public function index(Request $request)
@@ -61,9 +61,9 @@ class SchoolClassController extends Controller
         $column = $request->input('column');
 
         $classes = $this->classQuery()
-            ->withCount(['sections', 'students'])
+            ->withCount(['sections' => fn ($query) => $query->where('is_active', true), 'students'])
             ->with(['school', 'sections' => function ($query) {
-                $query->withCount('students')->orderBy('name');
+                $query->withCount('students')->where('is_active', true)->orderBy('name');
             }])
             ->when($search, function ($query, $search) use ($column) {
                 $query->where(function ($query) use ($search, $column) {
@@ -210,17 +210,20 @@ class SchoolClassController extends Controller
     {
         $sections = Section::with('schoolClass')
             ->withCount('students')
+            ->where('is_active', true)
             ->orderBy('name')
             ->paginate(15);
 
-        return view('admin.sections.index', compact('sections'));
+        $classes = $this->classQuery()->orderBy('name')->get();
+
+        return view('admin.sections.index', compact('sections', 'classes'));
     }
 
     public function sectionsIndex(SchoolClass $schoolClass)
     {
         $this->authorizeSchoolClass($schoolClass);
 
-        $sections = $schoolClass->sections()->withCount('students')->orderBy('name')->get();
+        $sections = $schoolClass->sections()->withCount('students')->where('is_active', true)->orderBy('name')->get();
 
         return view('admin.classes.sections.index', compact('schoolClass', 'sections'));
     }
@@ -253,6 +256,7 @@ class SchoolClassController extends Controller
             'school_class_id' => $schoolClass->id,
             'name' => strtoupper($request->input('name')),
             'display_name' => $displayName,
+            'is_active' => true,
         ]);
 
         return Redirect::route('admin.classes.show', $schoolClass)->with('success', 'Section created successfully.');
@@ -286,9 +290,73 @@ class SchoolClassController extends Controller
         $section->update([
             'name' => strtoupper($request->input('name')),
             'display_name' => $displayName,
+            'is_active' => true,
         ]);
 
         return Redirect::route('admin.classes.show', $schoolClass)->with('success', 'Section updated successfully.');
+    }
+
+    public function destroySection(SchoolClass $schoolClass, Section $section)
+    {
+        $this->authorizeSchoolClass($schoolClass);
+        $this->authorizeSection($schoolClass, $section);
+
+        $section->update(['is_active' => false]);
+
+        return Redirect::route('admin.classes.show', $schoolClass)->with('success', 'Section removed successfully.');
+    }
+
+    public function storeSectionGlobal(Request $request)
+    {
+        $request->validate([
+            'school_class_id' => [
+                'required',
+                'integer',
+                Rule::exists('school_classes', 'id')->where(fn ($query) => $query->where('is_active', true)),
+            ],
+            'name' => [
+                'required',
+                'string',
+                'max:10',
+                Rule::unique('sections')->where(fn ($query) => $query->where('school_class_id', $request->input('school_class_id'))),
+            ],
+            'display_name' => ['nullable', 'string', 'max:40'],
+        ]);
+
+        $schoolClass = SchoolClass::findOrFail($request->input('school_class_id'));
+
+        $displayName = $request->input('display_name') ?: sprintf('Section %s', strtoupper($request->input('name')));
+
+        Section::create([
+            'school_id' => $schoolClass->school_id,
+            'school_class_id' => $schoolClass->id,
+            'name' => strtoupper($request->input('name')),
+            'display_name' => $displayName,
+            'is_active' => true,
+        ]);
+
+        return Redirect::route('admin.sections.index')->with('success', 'Section created successfully.');
+    }
+
+    public function destroySectionGlobal(Section $section)
+    {
+        if (!$section->is_active) {
+            abort(404);
+        }
+
+        $section->update(['is_active' => false]);
+
+        return Redirect::route('admin.sections.index')->with('success', 'Section removed successfully.');
+    }
+
+    public function destroy(SchoolClass $schoolClass)
+    {
+        $this->authorizeSchoolClass($schoolClass);
+
+        $schoolClass->update(['is_active' => false]);
+        $schoolClass->sections()->update(['is_active' => false]);
+
+        return Redirect::route('admin.classes.index')->with('success', 'Class removed successfully.');
     }
 
     public function showSection(SchoolClass $schoolClass, Section $section)
@@ -310,17 +378,20 @@ class SchoolClassController extends Controller
     {
         $user = $this->currentUser();
         if ($user->hasAnyRole(['admin', 'super_admin'])) {
+            if (!$schoolClass->is_active) {
+                abort(404);
+            }
             return;
         }
 
-        if ($schoolClass->school_id !== $user->school_id) {
+        if ($schoolClass->school_id !== $user->school_id || !$schoolClass->is_active) {
             abort(403);
         }
     }
 
     protected function authorizeSection(SchoolClass $schoolClass, Section $section): void
     {
-        if ($section->school_class_id !== $schoolClass->id) {
+        if ($section->school_class_id !== $schoolClass->id || !$section->is_active) {
             abort(404);
         }
     }
